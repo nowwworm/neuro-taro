@@ -285,6 +285,7 @@ body {
     margin-bottom: 10px;
     font-size: 0.95em;
     line-height: 1.5;
+    color: rgba(255, 255, 255, 0.85);
 }
 
 .history-interpretation strong {
@@ -408,11 +409,15 @@ body {
 .ai-text {
     text-align: left;
     margin-bottom: 30px;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    font-size: 1.05rem;
 }
 
 .ai-text p {
     margin-bottom: 15px;
     text-indent: 20px;
+    line-height: 1.6;
 }
 
 .ai-text .highlight {
