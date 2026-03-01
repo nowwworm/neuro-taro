@@ -286,6 +286,9 @@ body {
     .card-slot {
         position: relative;
         transform: none !important;
+        left: auto !important;
+        top: auto !important;
+        margin: 0 auto !important;
         width: 80px;
         height: 125px;
     }

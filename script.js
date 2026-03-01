@@ -4,11 +4,11 @@ const TAROT_DECK = [
     { name: "Жрица", emoji: "🌙", meaning: "Интуиция, тайны, подсознание, скрытые знания." },
     { name: "Императрица", emoji: "👑", meaning: "Изобилие, женственность, природа, забота." },
     { name: "Император", emoji: "🏛️", meaning: "Власть, структура, стабильность, авторитет." },
-    { name: "Жрец", emoji: "📜", meaning: "Традиции, духовное наставничество, мудрость." },
-    { name: "Влюбленные", emoji: "❤️", meaning: "Выбор, союз, гармония, партнерство." },
-    { name: "Колесница", emoji: "движение", meaning: "Триумф, контроль, преодоление препятствий." },
-    { name: "Сила", emoji: "🦁", meaning: "Внутренняя сила, мужество, терпение, сострадание." },
-    { name: "Отшельник", emoji: "🕯️", meaning: "Самоанализ, одиночество, поиск истины." },
+    { name: "Иерофант (Жрец)", emoji: "⛪", meaning: "Традиции, духовное наставничество, мудрость." },
+    { name: "Влюбленные", emoji: "❤️", meaning: "Выбор, союз, гармония, любовь." },
+    { name: "Колесница", emoji: "🐎", meaning: "Триумф, контроль, преодоление препятствий." },
+    { name: "Сила", emoji: "🦁", meaning: "Внутренняя сила, мужество, терпение." },
+    { name: "Отшельник", emoji: "🏮", meaning: "Уединение, самопознание, поиск истины." },
     { name: "Колесо Фортуны", emoji: "🎡", meaning: "Циклы, судьба, переломный момент, удача." },
     { name: "Справедливость", emoji: "⚖️", meaning: "Карма, честность, закон, объективность." },
     { name: "Повешенный", emoji: "🌀", meaning: "Пауза, новый взгляд, жертва ради цели." },
@@ -362,7 +362,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <div class="tarot-card-inner">
                         <div class="tarot-card-back"></div>
                         <div class="tarot-card-front" style="transform: rotateY(180deg)">
-                            <img src="${imagePath}" alt="${cardData.name}" class="tarot-card-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <img src="${imagePath}" alt="${cardData.name}" class="tarot-card-image" onerror="this.onerror=null; this.src='https://placehold.co/100x150/111/d4af37?text=*'; this.style.display='block'; this.nextElementSibling.style.display='none';">
                             <div class="tarot-img-placeholder" style="display:none; font-size:2rem; margin-bottom:5px;">${cardData.emoji}</div>
                             <div class="tarot-name" style="font-size: ${isReversed ? '0.65rem' : '0.75rem'}">${cardData.name}</div>
                             ${isReversed ? '<div style="font-size: 0.55rem; color: #ff6b6b; margin-top: 2px;">(Перевернута)</div>' : ''}
