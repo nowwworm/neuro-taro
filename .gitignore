@@ -1,0 +1,14 @@
+node_modules/
+.env
+.netlify
+allure-results/
+allure-report/
+allure-report.pdf
+test-results/
+playwright-report/
+*.log
+neuro_tarot.db
+__pycache__/
+venv/
+backend/venv/
+.DS_Store

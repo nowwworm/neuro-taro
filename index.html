@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Нейро-Гадалка | Расклад «Подкова»</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Custom Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="d-flex flex-column min-vh-100 position-relative">
+    <div class="stars"></div>
+    <div class="twinkling"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-transparent py-3">
+        <div class="container">
+            <a class="navbar-brand font-cinzel text-gold text-shadow" href="index.html">
+                <i class="fa-solid fa-moon"></i> Нейро-Таро
+            </a>
+            <button class="navbar-toggler border-gold" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active text-light font-montserrat" href="index.html">Расклад</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light font-montserrat" href="stats.html">Статистика и Аналитика</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center mt-3 mt-lg-0 text-light font-montserrat" id="tg-user-panel"
+                    style="display: none !important;">
+                    <img id="tg-avatar" src="" alt="Avatar" class="rounded-circle me-2 border border-gold" width="32"
+                        height="32" style="display: none;">
+                    <span id="tg-name" class="me-3 fw-bold">...</span>
+                    <span class="badge bg-gold text-dark fs-6" id="tg-energy">⚡️ Загрузка...</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container flex-grow-1 d-flex flex-column align-items-center justify-content-center my-4">
+
+        <header class="text-center mb-5 w-100 mt-md-4">
+            <h1 class="font-cinzel text-gold text-shadow display-4">Нейро-Таро</h1>
+            <p class="subtitle text-uppercase mt-2 font-montserrat">Искусственный интеллект, читающий судьбу</p>
+        </header>
+
+        <!-- Hero Panel -->
+        <section class="row justify-content-center w-100" id="hero-section">
+            <div class="col-12 col-md-10 col-lg-8">
+                <div class="glass-panel text-center p-4 p-md-5">
+                    <h2 class="font-cinzel text-gold mb-4">Расклад «Подкова»</h2>
+                    <p class="font-montserrat lead text-light-alpha mb-4">Классический расклад из 7 карт, который
+                        поможет разобраться в текущей ситуации, узнать скрытые влияния и получить совет от нейросети на
+                        будущее.</p>
+                    <button id="start-btn" class="mystic-btn w-100 w-md-auto mx-auto d-block mb-3">Сделать
+                        расклад</button>
+                    <button id="history-btn" class="mystic-btn outline w-100 w-md-auto mx-auto d-block mt-2"><i
+                            class="fa-solid fa-book-open"></i> Моя история</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Spread Section -->
+        <section class="spread-section hidden w-100 text-center" id="spread-section">
+            <h3 class="spread-title font-cinzel text-gold mb-5">Карты судьбы ложатся на стол...</h3>
+
+            <div class="horseshoe-container mx-auto">
+                <div class="card-slot" id="slot-1" data-position="1. Прошлое"></div>
+                <div class="card-slot" id="slot-2" data-position="2. Настоящее"></div>
+                <div class="card-slot" id="slot-3" data-position="3. Скрытые влияния"></div>
+                <div class="card-slot" id="slot-4" data-position="4. Препятствия"></div>
+                <div class="card-slot" id="slot-5" data-position="5. Окружение"></div>
+                <div class="card-slot" id="slot-6" data-position="6. Совет"></div>
+                <div class="card-slot" id="slot-7" data-position="7. Итог"></div>
+            </div>
+        </section>
+
+        <!-- Result Section -->
+        <section class="row justify-content-center w-100 hidden mt-5" id="result-section">
+            <div class="col-12 col-md-10 col-lg-8">
+                <div class="glass-panel p-4 p-md-5">
+                    <h2 class="font-cinzel text-gold text-center mb-4">Толкование ИИ</h2>
+
+                    <div id="loading-ai" class="loading-ai text-center my-4">
+                        <div class="spinner mx-auto mb-3"></div>
+                        <p class="font-montserrat">Нейросеть анализирует арканы и связывает нити судьбы...</p>
+                    </div>
+
+                    <div id="ai-text" class="ai-text font-montserrat hidden">
+                        <!-- Text injected via JS -->
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button id="reset-btn" class="mystic-btn outline w-100 w-md-auto mx-auto d-block">Новый
+                            расклад</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Gypsy Animation Container -->
+    <div id="horses-container" class="horses-container"></div>
+
+    <!-- History Modal -->
+    <div class="modal fade" id="historyModal" tabindex="-1" aria-labelledby="historyModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+            <div class="modal-content glass-panel" style="border: 1px solid rgba(255, 215, 0, 0.3);">
+                <div class="modal-header border-bottom border-secondary">
+                    <h5 class="modal-title font-cinzel text-gold" id="historyModalLabel"><i
+                            class="fa-solid fa-scroll"></i> Книга Судеб</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body font-montserrat text-light" id="history-content">
+                    <div class="text-center py-4 text-light-alpha" id="history-loading">
+                        <div class="spinner-border text-gold mb-3" role="status"></div>
+                        <p>Листаем страницы прошлых прочтений...</p>
+                    </div>
+                    <div class="accordion accordion-flush bg-transparent" id="historyAccordion">
+                        <!-- History items injected here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <!-- Custom Logic -->
+    <script src="script.js"></script>
+</body>
+
+</html>

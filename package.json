@@ -1,0 +1,35 @@
+{
+  "name": "neuro-tarot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "test": "playwright test",
+    "report": "JAVA_HOME=\"/opt/homebrew/opt/openjdk/libexec/openjdk.jdk/Contents/Home\" allure generate allure-results --clean -o allure-report && JAVA_HOME=\"/opt/homebrew/opt/openjdk/libexec/openjdk.jdk/Contents/Home\" allure open allure-report",
+    "report:build": "JAVA_HOME=\"/opt/homebrew/opt/openjdk/libexec/openjdk.jdk/Contents/Home\" allure generate allure-results --clean -o allure-report",
+    "test:pdf": "npm run report:build && node scripts/generate-pdf.js",
+    "test:upload": "node scripts/upload-to-yandex.js",
+    "test:all": "npm run test && npm run test:pdf && npm run test:upload",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "node-telegram-bot-api": "^0.67.0",
+    "openai": "^6.25.0",
+    "pdfkit": "^0.17.2",
+    "pg": "^8.19.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "allure-commandline": "^2.37.0",
+    "allure-playwright": "^3.5.0",
+    "axios": "^1.13.6",
+    "dotenv": "^17.3.1",
+    "playwright": "^1.58.2"
+  }
+}

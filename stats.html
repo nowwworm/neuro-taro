@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аналитика | Нейро-Гадалка</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Custom Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="d-flex flex-column min-vh-100 position-relative">
+    <div class="stars"></div>
+    <div class="twinkling"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-transparent py-3">
+        <div class="container">
+            <a class="navbar-brand font-cinzel text-gold text-shadow" href="index.html">
+                <i class="fa-solid fa-moon"></i> Нейро-Таро
+            </a>
+            <button class="navbar-toggler border-gold" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-light font-montserrat" href="index.html">Расклад</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active text-light font-montserrat" href="stats.html">Статистика и
+                            Аналитика</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container flex-grow-1 d-flex flex-column align-items-center py-5">
+
+        <header class="text-center mb-5 w-100">
+            <h1 class="font-cinzel text-gold text-shadow display-5 mb-3">Статистика Платформы</h1>
+            <p class="font-montserrat text-light lead">Общие данные о прочитанных судьбах</p>
+        </header>
+
+        <section class="row justify-content-center w-100">
+            <div class="col-12 col-md-10 col-lg-8">
+                <div class="glass-panel p-4 p-md-5">
+
+                    <div class="text-center mb-5">
+                        <h3 class="font-cinzel text-gold mb-3">Всего раскладов</h3>
+                        <div class="display-2 font-montserrat fw-bold text-white text-shadow-glow" id="total-count">...
+                        </div>
+                    </div>
+
+                    <h4 class="font-cinzel text-gold text-center mb-4">Часто выпадающие арканы</h4>
+
+                    <div class="list-group list-group-flush bg-transparent mb-5" id="stats-list">
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-gold" role="status">
+                                <span class="visually-hidden">Загрузка...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <a href="/api/stats/pdf" id="download-pdf-btn"
+                            class="mystic-btn outline w-100 w-md-auto mx-auto d-inline-block text-decoration-none"
+                            target="_blank">
+                            <i class="fa-solid fa-file-pdf me-2"></i> Скачать PDF Отчет
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Stats Fetching Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const listEl = document.getElementById('stats-list');
+            const totalEl = document.getElementById('total-count');
+            const pdfBtn = document.getElementById('download-pdf-btn');
+
+            pdfBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                pdfBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Генерация...';
+                try {
+                    const res = await fetch('https://69041d70080cc7.lhr.life/api/stats/pdf', {
+                        headers: { 'Bypass-Tunnel-Reminder': 'true' }
+                    });
+                    const blob = await res.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'NeuroTarot_Analytics.pdf';
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                } catch (err) {
+                    console.error(err);
+                    alert("Ошибка скачивания PDF");
+                }
+                pdfBtn.innerHTML = '<i class="fa-solid fa-file-pdf me-2"></i>Скачать PDF Отчет';
+            });
+
+            try {
+                const res = await fetch('https://69041d70080cc7.lhr.life/api/stats', {
+                    headers: { 'Bypass-Tunnel-Reminder': 'true' }
+                });
+                const data = await res.json();
+
+                totalEl.textContent = data.totalReadings || 0;
+
+                listEl.innerHTML = '';
+                if (!data.topCards || data.topCards.length === 0) {
+                    listEl.innerHTML = '<p class="text-center text-light">Еще не было сделано ни одного расклада.</p>';
+                } else {
+                    data.topCards.forEach((card, index) => {
+                        const item = document.createElement('div');
+                        item.className = 'list-group-item bg-transparent text-light border-gold-light d-flex justify-content-between align-items-center py-3';
+                        item.innerHTML = `
+                            <span class="font-montserrat fs-5">
+                                <span class="badge bg-gold text-dark me-3">${index + 1}</span>
+                                ${card.name}
+                            </span>
+                            <span class="font-cinzel text-gold fs-5">${card.count} раз</span>
+                        `;
+                        listEl.appendChild(item);
+                    });
+                }
+            } catch (err) {
+                console.error('Failed to fetch stats:', err);
+                listEl.innerHTML = '<p class="text-danger text-center">Ошибка загрузки данных</p>';
+                totalEl.textContent = '-';
+            }
+        });
+    </script>
+</body>
+
+</html>
