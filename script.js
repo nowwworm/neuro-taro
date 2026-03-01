@@ -576,9 +576,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             loadingAi.classList.add('hidden');
             aiText.classList.remove('hidden');
-            // stopHorseAnimation(); <- Removed
 
             let finalHtml = data.interpretation || "<p>Духи молчат...</p>";
+
+            // Strip out random markdown HTML wrapper blocks if ChatGPT hallucinates them
+            finalHtml = finalHtml.replace(/```html\s*/i, '').replace(/```\s*$/i, '');
 
             // 1. Process structured interpretation blocks
             const parser = new DOMParser();
