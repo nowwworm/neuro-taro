@@ -568,19 +568,49 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             let finalHtml = data.interpretation || "<p>Духи молчат...</p>";
 
-            // Clean up possible markdown tags around the delimiter
-            finalHtml = finalHtml.replace(/<p>---НАПУТСТВИЕ---<\/p>/g, '---НАПУТСТВИЕ---');
+            // 1. Process structured interpretation blocks
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(finalHtml, 'text/html');
+            const blocks = doc.querySelectorAll('.interpretation-block');
 
-            if (finalHtml.includes('---НАПУТСТВИЕ---')) {
-                const parts = finalHtml.split('---НАПУТСТВИЕ---');
-                const mainMsg = parts[0].trim();
-                const summaryMsg = parts[1].trim();
-                finalHtml = mainMsg + `\n<div class="ai-summary">
-                    <strong style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; display: block; margin-bottom: 10px; opacity: 0.8;">🔮 Главный Итог Расклада:</strong>
-                    ${summaryMsg}
-                </div>`;
+            blocks.forEach(block => {
+                let cardName = block.getAttribute('data-card');
+                if (!cardName) return;
+
+                // Match with TAROT_DECK
+                let cardIndex = TAROT_DECK.findIndex(c => c.name === cardName);
+                if (cardIndex === -1) {
+                    cardIndex = TAROT_DECK.findIndex(c => cardName.includes(c.name));
+                }
+
+                if (cardIndex !== -1) {
+                    const imagePath = `cards/${cardIndex.toString().padStart(2, '0')}.jpg`;
+                    const innerHtml = block.innerHTML;
+                    block.innerHTML = `
+                        <img src="${imagePath}" class="interpretation-img" onerror="this.onerror=null; this.src='https://placehold.co/100x150/111/d4af37?text=*';">
+                        <div class="interpretation-text">
+                            ${innerHtml}
+                        </div>
+                    `;
+                }
+            });
+
+            if (blocks.length > 0) {
+                finalHtml = doc.body.innerHTML;
             } else {
-                // If AI somehow failed to use the separator, maybe just try to wrap the last paragraph
+                // Legacy support for ---НАПУТСТВИЕ---
+                finalHtml = finalHtml.replace(/<p>---НАПУТСТВИЕ---<\/p>/g, '---НАПУТСТВИЕ---');
+                if (finalHtml.includes('---НАПУТСТВИЕ---')) {
+                    const parts = finalHtml.split('---НАПУТСТВИЕ---');
+                    finalHtml = parts[0].trim() + `\n<div class="ai-summary">
+                        <strong style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; display: block; margin-bottom: 10px; opacity: 0.8;">🔮 Главный Итог Расклада:</strong>
+                        ${parts[1].trim()}
+                    </div>`;
+                }
+            }
+
+            // Fallback for missing AI summary wrapper
+            if (!finalHtml.includes('class="ai-summary"')) {
                 finalHtml = finalHtml.replace(/<p>([^<]+)<\/p>$/, '<div class="ai-summary"><strong style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; display: block; margin-bottom: 10px; opacity: 0.8;">🔮 Главный Итог Расклада:</strong><p>$1</p></div>');
             }
 
@@ -589,7 +619,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 finalHtml = `<div class="ai-reading-box">${finalHtml}</div>`;
             }
 
-            // Remove typewriter wrapper HTML if any, just render it inside ai-reading-box directly
+            // Render it
             aiText.innerHTML = finalHtml;
 
             // Format markdown-like output (bold text)
