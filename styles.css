@@ -695,9 +695,25 @@ input:checked+.slider:before {
     font-size: 0.95rem;
 }
 
+.ai-summary {
+    background: rgba(212, 175, 55, 0.2);
+    border-left: 4px solid var(--gold);
+    padding: 15px;
+    margin-top: 25px;
+    border-radius: 0 8px 8px 0;
+    font-weight: 500;
+    font-size: 1.05rem;
+    color: var(--gold);
+}
+
 [data-theme='light'] .ai-reading-box {
     background: rgba(0, 0, 0, 0.03);
     border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #333;
+}
+
+[data-theme='light'] .ai-summary {
+    background: rgba(212, 175, 55, 0.15);
     color: #333;
 }
 
@@ -752,6 +768,7 @@ input:checked+.slider:before {
     width: 80px;
     height: 120px;
     perspective: 1000px;
+    margin: 0 auto 60px auto;
 }
 
 .deck-card {
