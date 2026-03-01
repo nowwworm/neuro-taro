@@ -601,10 +601,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 let cardName = block.getAttribute('data-card');
                 if (!cardName) return;
 
-                // Match with drawnCards to get orientation and meaning
+                // Match with drawnCards (Robust bi-directional substring match for ChatGPT inconsistencies)
+                const normalize = str => str.toLowerCase().replace(/ё/g, 'е').replace(/[^а-яa-z0-9]/g, '');
+                const cNameNormalized = normalize(cardName);
+
                 let cardData = drawnCards.find(c => c.name === cardName);
                 if (!cardData) {
-                    cardData = drawnCards.find(c => cardName.includes(c.name));
+                    cardData = drawnCards.find(c => {
+                        const dbNameNormalized = normalize(c.name);
+                        return dbNameNormalized.includes(cNameNormalized) || cNameNormalized.includes(dbNameNormalized);
+                    });
                 }
 
                 if (cardData) {
