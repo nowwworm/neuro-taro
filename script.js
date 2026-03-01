@@ -439,7 +439,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     function dealHoldemCards() {
         const deckArea = document.getElementById('deck-area');
         const holdemContainer = document.getElementById('holdem-container');
-        const doneBtn = document.getElementById('holdem-done-btn');
         deckArea.innerHTML = '';
         holdemContainer.innerHTML = '';
 
@@ -532,19 +531,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             const flippedCount = document.querySelectorAll('.holdem-card.flipped').length;
             if (flippedCount === 7) {
                 setTimeout(() => {
-                    doneBtn.classList.remove('hidden');
-                }, 500);
+                    resultSection.classList.remove('hidden');
+                    resultSection.scrollIntoView({ behavior: 'smooth' });
+                    generateInterpretation();
+                }, 800);
             }
         }
-
-        // Setup the "Спросить Нейросеть" button
-        doneBtn.onclick = () => {
-            doneBtn.classList.add('hidden');
-            resultSection.classList.remove('hidden');
-            // Smooth scroll to results
-            resultSection.scrollIntoView({ behavior: 'smooth' });
-            generateInterpretation();
-        };
     }
 
     async function generateInterpretation() {
