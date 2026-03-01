@@ -381,15 +381,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                 });
 
-                // Auto flip after all cards are dealt
+                // Auto flip after all cards are dealt with a very long reading pause
                 setTimeout(() => {
                     if (!cardEl.classList.contains('flipped')) {
                         cardEl.classList.add('flipped');
                         checkAllFlipped();
                     }
-                }, 2800 + (index * 200));
+                }, 4000 + (index * 1500)); // 1.5s reading time per card
 
-            }, index * 400); // 400ms delay between each card dealing
+            }, index * 800); // 800ms delay between each card dealing
         });
     }
 
@@ -535,13 +535,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             loadingAi.classList.add('hidden');
             aiText.classList.remove('hidden');
-            aiText.innerHTML = ''; // Setup for typewriter
             // stopHorseAnimation(); <- Removed
 
-            const finalHtml = data.interpretation || "<p>Духи молчат...</p>";
+            let finalHtml = data.interpretation || "<p>Духи молчат...</p>";
+            // Remove typewriter wrapper HTML if any, just render it inside ai-reading-box directly
+            aiText.innerHTML = finalHtml;
 
-            // TYPEWRITER ANIMATION (Parses HTML tags instantly, types text nodes)
-            typeWriterHTML(finalHtml, aiText, 15);
+            // Format markdown-like output (bold text)
+            aiText.innerHTML = aiText.innerHTML.replace(/\*\*(.*?)\*\*/g, '<strong class="text-gold">$1</strong>');
 
         } catch (e) {
             if (loadingInterval) clearInterval(loadingInterval);

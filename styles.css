@@ -284,10 +284,10 @@ body {
     }
 
     .card-slot {
-        position: static;
+        position: relative;
         transform: none !important;
         width: 80px;
-        height: 130px;
+        height: 125px;
     }
 }
 
