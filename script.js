@@ -366,7 +366,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <div class="tarot-img-placeholder" style="display:none; font-size:2rem; margin-bottom:5px;">${cardData.emoji}</div>
                             <div class="tarot-name" style="font-size: ${isReversed ? '0.65rem' : '0.75rem'}">${cardData.name}</div>
                             ${isReversed ? '<div style="font-size: 0.55rem; color: #ff6b6b; margin-top: 2px;">(Перевернута)</div>' : ''}
-                            <div style="font-size: 0.5rem; margin-top: ${isReversed ? '2px' : '5px'}; padding: 0 2px; line-height: 1.1;">${cardData.meaning}</div>
+                            <div style="font-size: 0.45rem; margin-top: ${isReversed ? '2px' : '4px'}; padding: 0 4px; line-height: 1.1;">${cardData.meaning}</div>
                         </div>
                     </div>
                 `;
