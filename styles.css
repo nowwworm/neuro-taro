@@ -842,3 +842,25 @@ input:checked+.slider:before {
         height: 155px;
     }
 }
+
+#holdem-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    padding-bottom: 20px;
+    width: 100%;
+}
+
+@media (max-width: 900px) {
+    #holdem-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px 10px;
+        justify-items: center;
+    }
+
+    #holdem-container .holdem-card-slot:nth-child(7) {
+        grid-column: 2 / 3;
+    }
+}

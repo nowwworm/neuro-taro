@@ -17,7 +17,7 @@
     <!-- Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <!-- Custom Styles -->
-    <link rel="stylesheet" href="styles.css?v=8">
+    <link rel="stylesheet" href="styles.css?v=9">
 </head>
 
 <body class="d-flex flex-column min-vh-100 position-relative">
@@ -134,8 +134,8 @@
                 <div class="deck-area mx-auto mb-4" id="deck-area">
                     <!-- Cards will be instantiated here and animated to slots -->
                 </div>
-                <div class="holdem-container custom-scrollbar d-flex justify-content-start justify-content-lg-center"
-                    id="holdem-container" style="overflow-x: auto; padding-bottom: 20px; gap: 10px;">
+                <div class="holdem-container" id="holdem-container">
+                    <!-- Cards will be generated via JS -->
                     <!-- 7 slots for dealt cards -->
                 </div>
                 <!-- Button to query API after looking at cards -->
@@ -203,7 +203,7 @@
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom Logic -->
-    <script src="script.js?v=8"></script>
+    <script src="script.js?v=9"></script>
 </body>
 
 </html>
