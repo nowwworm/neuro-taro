@@ -191,25 +191,21 @@ app.post('/api/readings', telegramAuth, async (req, res) => {
     }
 });
 
-// --- TELEGRAM STARS MONETIZATION ---
-// Generate an invoice link for the Mini App to open
+// --- MOCK TELEGRAM STARS MONETIZATION FOR TESTING ---
+// Directly grant energy instead of creating a real invoice
 app.post('/api/buy-energy', telegramAuth, async (req, res) => {
     try {
         const tgId = req.tgUser.id.toString();
 
-        const invoiceLink = await bot.createInvoiceLink(
-            'Энергия для расклада',
-            'Пополняет вашу энергию на 3 расклада.',
-            `refill_${tgId}_${Date.now()}`,
-            '', // provider token is empty for Telegram Stars
-            'XTR', // Telegram Stars currency code
-            [{ label: '3 расклада', amount: 50 }] // 50 Stars
-        );
+        // 1. Immediately grant 3 energy for testing
+        await db.query('UPDATE users SET energy = energy + 3 WHERE telegram_id = $1', [tgId]);
 
-        res.json({ invoiceUrl: invoiceLink });
+        // 2. We don't need a real invoice URL anymore, we just return success
+        // return a fake url or just a success flag
+        res.json({ success: true, fakeInvoice: true });
     } catch (err) {
-        console.error("Failed to create invoice:", err);
-        res.status(500).json({ error: "Could not create payment link" });
+        console.error("Failed to mock payment:", err);
+        res.status(500).json({ error: "Could not process mock payment" });
     }
 });
 

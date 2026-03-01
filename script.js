@@ -159,8 +159,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                 });
                 const data = await res.json();
-
-                if (data.invoiceUrl) {
+                if (data.fakeInvoice) {
+                    // MOCK PAYMENT FLOW
+                    if (tg.isVersionAtLeast('6.2')) {
+                        tg.showAlert('Тестовый режим: Оплата симулирована успешно! Энергия начислена.');
+                    } else {
+                        alert('Тестовый режим: Оплата симулирована успешно! Энергия начислена.');
+                    }
+                    // Simulate loading delay then reload
+                    setTimeout(() => window.location.reload(), 2000);
+                } else if (data.invoiceUrl) {
+                    // REAL PAYMENT FLOW (currently disabled in backend)
                     tg.openInvoice(data.invoiceUrl, (status) => {
                         if (status === 'paid') {
                             if (tg.isVersionAtLeast('6.2')) { tg.showAlert('Оплата успешно завершена! Ожидайте начисления энергии (пару секунд).'); } else { alert('Оплата успешно завершена! Ожидайте начисления энергии (пару секунд).'); }
