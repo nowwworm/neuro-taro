@@ -589,17 +589,25 @@ document.addEventListener('DOMContentLoaded', async () => {
                 let cardName = block.getAttribute('data-card');
                 if (!cardName) return;
 
-                // Match with TAROT_DECK
-                let cardIndex = TAROT_DECK.findIndex(c => c.name === cardName);
-                if (cardIndex === -1) {
-                    cardIndex = TAROT_DECK.findIndex(c => cardName.includes(c.name));
+                // Match with drawnCards to get orientation and meaning
+                let cardData = drawnCards.find(c => c.name === cardName);
+                if (!cardData) {
+                    cardData = drawnCards.find(c => cardName.includes(c.name));
                 }
 
-                if (cardIndex !== -1) {
+                if (cardData) {
+                    const cardIndex = TAROT_DECK.findIndex(c => c.name === cardData.name);
                     const imagePath = `cards/${cardIndex.toString().padStart(2, '0')}.jpg`;
                     const innerHtml = block.innerHTML;
+
+                    const encName = encodeURIComponent(cardData.name);
+                    const encDesc = encodeURIComponent(cardData.meaning);
+
                     block.innerHTML = `
-                        <img src="${imagePath}" class="interpretation-img" onerror="this.onerror=null; this.src='https://placehold.co/100x150/111/d4af37?text=*';">
+                        <div style="position: relative; display: inline-block; flex-shrink: 0; width: 60px; height: 95px;">
+                            <img src="${imagePath}" class="interpretation-img" style="cursor: pointer; position: absolute; top:0; left:0; width: 100%; height: 100%; transition: transform 0.2s; margin: 0;" onmouseover="this.style.transform='scale(1.05)';" onmouseout="this.style.transform='scale(1)';" onclick="window.openCardZoom(decodeURIComponent('${encName}'), '${imagePath}', decodeURIComponent('${encDesc}'), ${cardData.isReversed})" onerror="this.onerror=null; this.src='https://placehold.co/100x150/111/d4af37?text=*';">
+                            <div style="position: absolute; bottom: -8px; right: -8px; font-size: 1.1rem; pointer-events: none; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">🔍</div>
+                        </div>
                         <div class="interpretation-text">
                             ${innerHtml}
                         </div>
