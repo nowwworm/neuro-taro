@@ -36,6 +36,20 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    /* Disable unseemly mobile text selection (the "quotes" / handles) for native app feel */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Allow text selection in inputs and textareas */
+input,
+textarea {
+    -webkit-user-select: auto !important;
+    -moz-user-select: auto !important;
+    -ms-user-select: auto !important;
+    user-select: auto !important;
 }
 
 /* Background Effects */

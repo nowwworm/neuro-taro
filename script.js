@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     tg.MainButton.show();
 
     // Hide HTML button if we use MainButton (optional, but cleaner for mobile)
-    if (tg.initDataUnsafe && Object.keys(tg.initDataUnsafe).length > 0) {
+    if (tg.platform !== "unknown") {
         startBtn.classList.add('d-none');
     }
 
