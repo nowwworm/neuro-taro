@@ -226,19 +226,19 @@ body {
 
 /* Positions for 7 Cards Horseshoe */
 #slot-1 {
-    left: 5%;
+    left: 0%;
     bottom: 0;
     transform: rotate(-15deg);
 }
 
 #slot-2 {
-    left: 15%;
+    left: 18%;
     bottom: 35%;
     transform: rotate(-10deg);
 }
 
 #slot-3 {
-    left: 30%;
+    left: 34%;
     bottom: 65%;
     transform: rotate(-5deg);
 }
@@ -250,19 +250,19 @@ body {
 }
 
 #slot-5 {
-    right: 30%;
+    right: 34%;
     bottom: 65%;
     transform: rotate(5deg);
 }
 
 #slot-6 {
-    right: 15%;
+    right: 18%;
     bottom: 35%;
     transform: rotate(10deg);
 }
 
 #slot-7 {
-    right: 5%;
+    right: 0%;
     bottom: 0;
     transform: rotate(15deg);
 }
@@ -428,19 +428,46 @@ body {
     margin: 30px 0;
 }
 
-.spinner {
-    width: 50px;
-    height: 50px;
-    border: 3px solid rgba(212, 175, 55, 0.3);
-    border-radius: 50%;
-    border-top-color: var(--gold);
-    animation: spin 1s ease-in-out infinite;
+.mystic-progress-container {
+    width: 100%;
+    max-width: 400px;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
 }
 
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
+.mystic-progress-bar {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    background-size: 200% 100%;
+    animation: loadingBarPulse 2s linear infinite, fillBar 6s ease-out forwards;
+    box-shadow: 0 0 10px var(--gold);
+}
+
+@keyframes loadingBarPulse {
+    0% {
+        background-position: 100% 0;
     }
+
+    100% {
+        background-position: -100% 0;
+    }
+}
+
+@keyframes fillBar {
+    0% {
+        width: 0%;
+    }
+
+    100% {
+        width: 95%;
+    }
+
+    /* Leaves a little space so it looks like it's "almost done" if it hangs */
 }
 
 .ai-text {
@@ -640,5 +667,100 @@ input:checked+.slider:before {
 @keyframes fadeIn {
     to {
         opacity: 1;
+    }
+}
+
+/* Layout Toggle */
+.layout-toggle .btn {
+    color: var(--gold);
+    border-color: var(--gold);
+    transition: all 0.3s ease;
+}
+
+.layout-toggle .btn-check:checked+.btn {
+    background-color: var(--gold);
+    color: #000;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Holdem Casino Table */
+.holdem-section .casino-table {
+    background: radial-gradient(circle, #1a422a 0%, #09170e 100%);
+    border: 2px solid var(--gold);
+    box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.8), 0 0 20px rgba(212, 175, 55, 0.2);
+    position: relative;
+    padding: 20px;
+    border-radius: 15px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.deck-area {
+    position: relative;
+    width: 80px;
+    height: 120px;
+    perspective: 1000px;
+}
+
+.deck-card {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+    border: 1px solid var(--gold);
+    background: radial-gradient(circle, #2d1a3f 0%, #0a0514 100%);
+    background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(212, 175, 55, 0.05) 5px, rgba(212, 175, 55, 0.05) 10px);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.deck-card::after {
+    content: '✵';
+    font-size: 2rem;
+    color: var(--gold-dim);
+}
+
+.holdem-container {
+    padding: 10px;
+}
+
+.holdem-card-slot {
+    width: 80px;
+    height: 125px;
+    position: relative;
+    flex-shrink: 0;
+    perspective: 1000px;
+}
+
+.holdem-card {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+}
+
+.holdem-card.flipped {
+    transform: rotateY(180deg);
+}
+
+.holdem-subtitle {
+    font-size: 0.65rem;
+    color: var(--gold);
+    margin-top: 5px;
+    font-family: 'Montserrat', sans-serif;
+    opacity: 0;
+    transition: opacity 0.5s;
+    text-align: center;
+    line-height: 1.2;
+}
+
+@media (min-width: 768px) {
+    .holdem-card-slot {
+        width: 100px;
+        height: 155px;
     }
 }

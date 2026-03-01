@@ -78,6 +78,19 @@
                         поможет разобраться в текущей ситуации, узнать скрытые влияния и получить совет от нейросети на
                         будущее.</p>
 
+                    <div class="layout-toggle mb-4 d-flex justify-content-center"
+                        style="box-shadow: 0 0 10px rgba(0,0,0,0.5); border-radius: 5px;">
+                        <input type="radio" class="btn-check" name="layout-options" id="layout-classic" value="classic"
+                            checked />
+                        <label class="btn btn-outline-warning rounded-end-0 font-montserrat fw-bold px-4"
+                            for="layout-classic">Классика</label>
+
+                        <input type="radio" class="btn-check" name="layout-options" id="layout-holdem" value="holdem" />
+                        <label
+                            class="btn btn-outline-warning rounded-start-0 border-start-0 font-montserrat fw-bold px-4"
+                            for="layout-holdem">На Сукне</label>
+                    </div>
+
                     <div class="mb-4 text-start">
                         <label for="user-query" class="form-label text-gold font-montserrat fw-bold"><i
                                 class="fa-solid fa-star pe-2"></i>Ваш вопрос картам (необязательно):</label>
@@ -109,6 +122,23 @@
             </div>
         </section>
 
+        <!-- Holdem Section -->
+        <section class="holdem-section hidden w-100" id="holdem-section">
+            <div class="casino-table glass-panel mb-4 text-center">
+                <h3 class="font-cinzel text-gold mb-4 mt-2">Стол Судьбы</h3>
+                <div class="deck-area mx-auto mb-4" id="deck-area">
+                    <!-- Cards will be instantiated here and animated to slots -->
+                </div>
+                <div class="holdem-container custom-scrollbar d-flex justify-content-start justify-content-lg-center"
+                    id="holdem-container" style="overflow-x: auto; padding-bottom: 20px; gap: 10px;">
+                    <!-- 7 slots for dealt cards -->
+                </div>
+                <!-- Button to query API after looking at cards -->
+                <button id="holdem-done-btn" class="mystic-btn w-100 w-md-auto mx-auto mt-4 hidden">Спросить
+                    Нейросеть</button>
+            </div>
+        </section>
+
         <!-- Result Section -->
         <section class="row justify-content-center w-100 hidden mt-5" id="result-section">
             <div class="col-12 col-md-10 col-lg-8">
@@ -116,8 +146,11 @@
                     <h2 class="font-cinzel text-gold text-center mb-4">Толкование ИИ</h2>
 
                     <div id="loading-ai" class="loading-ai text-center my-4">
-                        <div class="spinner mx-auto mb-3"></div>
-                        <p class="font-montserrat">Нейросеть анализирует арканы и связывает нити судьбы...</p>
+                        <div class="mystic-progress-container mx-auto mb-3">
+                            <div class="mystic-progress-bar"></div>
+                        </div>
+                        <p class="font-montserrat text-gold loading-text" id="loading-text">Нейросеть считывает нити
+                            судьбы...</p>
                     </div>
 
                     <div id="ai-text" class="ai-text font-montserrat hidden">
@@ -125,8 +158,10 @@
                     </div>
 
                     <div class="text-center mt-4">
-                        <button id="reset-btn" class="mystic-btn outline w-100 w-md-auto mx-auto d-block">Новый
-                            расклад</button>
+                        <button id="reset-btn" class="mystic-btn w-100 w-md-auto mx-auto d-block fw-bold text-dark"
+                            style="background: var(--gold); border: none; box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);">
+                            <i class="fa-solid fa-rotate-right pe-2"></i>Новый расклад
+                        </button>
                     </div>
                 </div>
             </div>

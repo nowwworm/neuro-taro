@@ -220,13 +220,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateEnergyUI(userEnergy);
 
         heroSection.classList.add('hidden');
-        spreadSection.classList.remove('hidden');
-
         tg.MainButton.hide(); // Hide main button during spread
         tg.BackButton.show(); // Show back button to allow returning
 
-        // startHorseAnimation(); <- Removed
-        dealCards();
+        const layout = document.querySelector('input[name="layout-options"]:checked').value;
+        if (layout === 'holdem') {
+            document.getElementById('holdem-section').classList.remove('hidden');
+            dealHoldemCards();
+        } else {
+            spreadSection.classList.remove('hidden');
+            dealCards();
+        }
     }
 
     function resetApp() {
@@ -237,6 +241,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         drawnCards = [];
         resultSection.classList.add('hidden');
         spreadSection.classList.add('hidden');
+        document.getElementById('holdem-section').classList.add('hidden');
+        document.getElementById('holdem-container').innerHTML = '';
+        document.getElementById('deck-area').innerHTML = '';
+        document.getElementById('holdem-done-btn').classList.add('hidden');
+
         heroSection.classList.remove('hidden');
         aiText.innerHTML = '';
         aiText.classList.add('hidden');
@@ -350,7 +359,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 cardEl.innerHTML = `
                     <div class="tarot-card-inner">
                         <div class="tarot-card-back"></div>
-                        <div class="tarot-card-front" style="transform: rotateY(180deg) ${isReversed ? 'rotateZ(180deg)' : ''}">
+                        <div class="tarot-card-front" style="transform: rotateY(180deg)">
                             <img src="${imagePath}" alt="${cardData.name}" class="tarot-card-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                             <div class="tarot-img-placeholder" style="display:none; font-size:2rem; margin-bottom:5px;">${cardData.emoji}</div>
                             <div class="tarot-name" style="font-size: ${isReversed ? '0.65rem' : '0.75rem'}">${cardData.name}</div>
@@ -366,13 +375,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 cardEl.addEventListener('click', function () {
                     if (!this.classList.contains('flipped')) {
                         this.classList.add('flipped');
-                        if (isReversed) {
-                            setTimeout(() => {
-                                const front = this.querySelector('.tarot-card-front');
-                                front.style.transition = 'transform 0.6s ease';
-                                front.style.transform = 'rotateY(180deg) rotateZ(0deg)';
-                            }, 600);
-                        }
                         checkAllFlipped();
                     }
                 });
@@ -381,13 +383,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 setTimeout(() => {
                     if (!cardEl.classList.contains('flipped')) {
                         cardEl.classList.add('flipped');
-                        if (isReversed) {
-                            setTimeout(() => {
-                                const front = cardEl.querySelector('.tarot-card-front');
-                                front.style.transition = 'transform 0.6s ease';
-                                front.style.transform = 'rotateY(180deg) rotateZ(0deg)';
-                            }, 600);
-                        }
                         checkAllFlipped();
                     }
                 }, 2800 + (index * 200));
@@ -407,8 +402,117 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    function dealHoldemCards() {
+        const deckArea = document.getElementById('deck-area');
+        const holdemContainer = document.getElementById('holdem-container');
+        const doneBtn = document.getElementById('holdem-done-btn');
+        deckArea.innerHTML = '';
+        holdemContainer.innerHTML = '';
+
+        // Draw cards
+        const deckCopy = [...TAROT_DECK];
+        for (let i = deckCopy.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [deckCopy[i], deckCopy[j]] = [deckCopy[j], deckCopy[i]];
+        }
+        drawnCards = deckCopy.slice(0, 7).map(c => ({ ...c, isReversed: Math.random() > 0.8 }));
+
+        // 1. Render stacked deck cards
+        for (let i = 0; i < 22; i++) {
+            const dCard = document.createElement('div');
+            dCard.className = 'deck-card';
+            dCard.style.top = `-${i * 1.5}px`;
+            dCard.style.zIndex = i;
+            if (i === 21) dCard.classList.add('top-deck-card');
+            deckArea.appendChild(dCard);
+        }
+
+        // 2. Deal 7 cards to table
+        setTimeout(() => {
+            drawnCards.forEach((cardData, index) => {
+                const isReversed = cardData.isReversed;
+                const imageFilename = cardData.id.toString().padStart(2, '0') + '.jpg';
+                const imagePath = `cards/${imageFilename}`;
+
+                const slot = document.createElement('div');
+                slot.className = 'holdem-card-slot';
+
+                const cardEl = document.createElement('div');
+                cardEl.className = 'holdem-card';
+                cardEl.style.animation = `dealToHoldem 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards ${index * 0.2}s`;
+                cardEl.style.opacity = '0'; // hide initially
+
+                cardEl.innerHTML = `
+                    <div class="tarot-card-inner" style="width: 100%; height: 100%; position: relative;">
+                        <!-- Back -->
+                        <div class="deck-card" style="box-shadow: 0 0 5px rgba(0,0,0,0.5);"></div>
+                        <!-- Front -->
+                        <div class="tarot-card-front" style="transform: rotateY(180deg); position: absolute; width: 100%; height: 100%; backface-visibility: hidden; background: #111; border: 1px solid var(--gold); border-radius: 5px; padding: 2px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;">
+                            <img src="${imagePath}" style="width: 100%; height: 60%; object-fit: cover; border-radius: 3px;" onerror="this.style.display='none';">
+                            <div style="font-size: ${isReversed ? '0.45rem' : '0.55rem'}; color: var(--gold); font-family: 'Cinzel', serif; text-align: center; margin-top: 3px; font-weight: bold; line-height: 1;">${cardData.name}</div>
+                            ${isReversed ? '<div style="font-size: 0.45rem; color: #ff6b6b; margin-top: 1px;">(Перевернута)</div>' : ''}
+                        </div>
+                    </div>
+                `;
+
+                const subtitle = document.createElement('div');
+                subtitle.className = 'holdem-subtitle';
+                subtitle.innerText = "Нажмите чтобы открыть";
+
+                slot.appendChild(cardEl);
+                slot.appendChild(subtitle);
+                holdemContainer.appendChild(slot);
+
+                // Clicking flips the card on the table
+                cardEl.addEventListener('click', function () {
+                    if (!this.classList.contains('flipped')) {
+                        this.classList.add('flipped');
+                        subtitle.innerText = cardData.name + (isReversed ? ' (П)' : '');
+                        subtitle.style.opacity = '1';
+                        checkHoldemFlipped();
+                    }
+                });
+            });
+        }, 800);
+
+        function checkHoldemFlipped() {
+            const flippedCount = document.querySelectorAll('.holdem-card.flipped').length;
+            if (flippedCount === 7) {
+                setTimeout(() => {
+                    doneBtn.classList.remove('hidden');
+                }, 500);
+            }
+        }
+
+        // Setup the "Спросить Нейросеть" button
+        doneBtn.onclick = () => {
+            doneBtn.classList.add('hidden');
+            resultSection.classList.remove('hidden');
+            // Smooth scroll to results
+            resultSection.scrollIntoView({ behavior: 'smooth' });
+            generateInterpretation();
+        };
+    }
+
     async function generateInterpretation() {
+        let loadingInterval;
         try {
+            const loadingText = document.getElementById('loading-text');
+            const phrases = [
+                "Нейросеть считывает нити судьбы...",
+                "Вглядываемся в арканы...",
+                "Анализируем скрытые смыслы...",
+                "Духи нашептывают ответ...",
+                "Формируем уникальное толкование..."
+            ];
+            let phraseIdx = 0;
+            if (loadingText) {
+                loadingInterval = setInterval(() => {
+                    phraseIdx = (phraseIdx + 1) % phrases.length;
+                    loadingText.innerText = phrases[phraseIdx];
+                }, 1400);
+            }
+
             const userQuery = document.getElementById('user-query')?.value?.trim() || '';
             // Fetch real AI response from backend
             const res = await fetch('/api/readings', {
@@ -425,6 +529,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const data = await res.json();
 
+            if (loadingInterval) clearInterval(loadingInterval);
+
             loadingAi.classList.add('hidden');
             aiText.classList.remove('hidden');
             aiText.innerHTML = ''; // Setup for typewriter
@@ -436,6 +542,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             typeWriterHTML(finalHtml, aiText, 15);
 
         } catch (e) {
+            if (loadingInterval) clearInterval(loadingInterval);
             console.error(e);
             loadingAi.classList.add('hidden');
             aiText.classList.remove('hidden');
