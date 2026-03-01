@@ -39,9 +39,29 @@ document.addEventListener('DOMContentLoaded', async () => {
     const horsesContainer = document.getElementById('horses-container');
     const historyBtn = document.getElementById('history-btn');
     const historyModal = new bootstrap.Modal(document.getElementById('historyModal'));
+    const historyModalEl = document.getElementById('historyModal');
     const historyContent = document.getElementById('history-content');
     const historyLoading = document.getElementById('history-loading');
     const historyAccordion = document.getElementById('historyAccordion');
+
+    // --- THEME INIT ---
+    const themeToggle = document.getElementById('theme-toggle');
+    const savedTheme = localStorage.getItem('neuro-tarot-theme') || 'dark';
+    if (savedTheme === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+        if (themeToggle) themeToggle.checked = true;
+    }
+    if (themeToggle) {
+        themeToggle.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('neuro-tarot-theme', 'light');
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('neuro-tarot-theme', 'dark');
+            }
+        });
+    }
 
     // Telegram UI Elements
     const tgUserPanel = document.getElementById('tg-user-panel');
@@ -227,8 +247,28 @@ document.addEventListener('DOMContentLoaded', async () => {
         tg.MainButton.show();
     }
 
+    let isHistoryOpen = false;
+    historyModalEl.addEventListener('show.bs.modal', () => {
+        isHistoryOpen = true;
+        tg.BackButton.show();
+    });
+    historyModalEl.addEventListener('hide.bs.modal', () => {
+        isHistoryOpen = false;
+        if (heroSection.classList.contains('hidden')) {
+            tg.BackButton.show(); // keep it if we are in spread view
+        } else {
+            tg.BackButton.hide();
+        }
+    });
+
     resetBtn.addEventListener('click', resetApp);
-    tg.BackButton.onClick(resetApp);
+    tg.BackButton.onClick(() => {
+        if (isHistoryOpen) {
+            historyModal.hide();
+        } else {
+            resetApp();
+        }
+    });
 
     // --- HISTORY MODAL LOGIC ---
     historyBtn.addEventListener('click', async () => {
@@ -322,6 +362,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 cardEl.addEventListener('click', function () {
                     if (!this.classList.contains('flipped')) {
                         this.classList.add('flipped');
+                        if (isReversed) {
+                            setTimeout(() => {
+                                const front = this.querySelector('.tarot-card-front');
+                                front.style.transition = 'transform 0.6s ease';
+                                front.style.transform = 'rotateY(180deg) rotateZ(0deg)';
+                            }, 600);
+                        }
                         checkAllFlipped();
                     }
                 });
@@ -330,6 +377,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 setTimeout(() => {
                     if (!cardEl.classList.contains('flipped')) {
                         cardEl.classList.add('flipped');
+                        if (isReversed) {
+                            setTimeout(() => {
+                                const front = cardEl.querySelector('.tarot-card-front');
+                                front.style.transition = 'transform 0.6s ease';
+                                front.style.transform = 'rotateY(180deg) rotateZ(0deg)';
+                            }, 600);
+                        }
                         checkAllFlipped();
                     }
                 }, 2800 + (index * 200));
