@@ -1016,3 +1016,12 @@ input:checked+.slider:before {
         font-size: 2.5rem;
     }
 }
+
+/* Light Theme Bootstrap Overrides */
+[data-theme="light"] .text-light {
+    color: #3e3e3e !important;
+}
+
+[data-theme="light"] .navbar-toggler-icon {
+    filter: invert(0.8);
+}
