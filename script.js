@@ -146,13 +146,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         tgEnergy.textContent = `⚡️ ${energy}`;
         // Update both HTML button and TG MainButton
         if (energy > 0) {
-            startBtn.textContent = 'Сделать расклад';
+            startBtn.innerHTML = 'Сделать расклад';
             startBtn.classList.remove('outline');
 
             tg.MainButton.text = "Сделать расклад";
             tg.MainButton.enable();
         } else {
-            startBtn.innerHTML = '<i class="fa-solid fa-star text-gold pe-2"></i>Купить заряд (50 ⭐️)';
+            startBtn.innerHTML = 'Купить заряд (50 ⭐️)';
             startBtn.classList.add('outline');
 
             tg.MainButton.text = "Купить заряд (50 ⭐️)";
@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function handleStartSpread() {
         // ENERGY CHECK LOGIC
         if (userEnergy <= 0) {
-            startBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Соединение...';
+            startBtn.innerHTML = 'Соединение...';
             tg.MainButton.text = "Соединение...";
             tg.MainButton.disable();
 
@@ -225,7 +225,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         tg.MainButton.hide(); // Hide main button during spread
         tg.BackButton.show(); // Show back button to allow returning
 
-        startHorseAnimation();
+        // startHorseAnimation(); <- Removed
         dealCards();
     }
 
@@ -422,7 +422,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             loadingAi.classList.add('hidden');
             aiText.classList.remove('hidden');
             aiText.innerHTML = ''; // Setup for typewriter
-            stopHorseAnimation();
+            // stopHorseAnimation(); <- Removed
 
             const finalHtml = data.interpretation || "<p>Духи молчат...</p>";
 
@@ -433,7 +433,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error(e);
             loadingAi.classList.add('hidden');
             aiText.classList.remove('hidden');
-            stopHorseAnimation();
+            // stopHorseAnimation(); <- Removed
             aiText.innerHTML = "<p>Произошла мистическая ошибка связи.</p>";
         }
     }
@@ -564,50 +564,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         type();
     }
 
-    // --- GYPSY ANIMATION ---
+    // --- GYPSY ANIMATION (REMOVED) ---
     function startHorseAnimation() {
-        horsesContainer.innerHTML = '';
-
-        // Scene 1: Horse is standing
-        const horse = document.createElement('img');
-        horse.src = 'horse.gif';
-        horse.className = 'horse-victim';
-
-        // Scene 2: Gypsy runs in and steals it
-        const gypsy = document.createElement('img');
-        gypsy.src = 'gypsy.gif';
-        gypsy.className = 'gypsy-thief';
-
-        horsesContainer.appendChild(horse);
-        horsesContainer.appendChild(gypsy);
-
-        // Remove horse when gypsy reaches it (approx 2s into the 4s animation)
-        animationTimeout = setTimeout(() => {
-            if (horse.parentNode) horse.remove();
-        }, 1800);
-
-        // Scene 3: Campfire cooking
-        setTimeout(() => {
-            if (gypsy.parentNode) gypsy.remove();
-
-            const campfire = document.createElement('div');
-            campfire.className = 'campfire-scene';
-            campfire.innerHTML = `
-                <img src="https://media.giphy.com/media/l41JUIOzaE8pXhKZW/giphy.gif" alt="Campfire">
-                <span>Вкусная конина!</span>
-            `;
-            horsesContainer.appendChild(campfire);
-
-            // Clean up campfire after it fades out
-            setTimeout(() => {
-                if (campfire.parentNode) campfire.remove();
-            }, 5000);
-
-        }, 4500);
+        // horsesContainer.innerHTML = '';
     }
 
     function stopHorseAnimation() {
-        clearTimeout(animationTimeout);
-        horsesContainer.innerHTML = '';
+        // clearTimeout(animationTimeout);
+        // horsesContainer.innerHTML = '';
     }
 });
