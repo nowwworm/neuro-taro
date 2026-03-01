@@ -539,6 +539,28 @@ document.addEventListener('DOMContentLoaded', async () => {
             // stopHorseAnimation(); <- Removed
 
             let finalHtml = data.interpretation || "<p>Духи молчат...</p>";
+
+            // Clean up possible markdown tags around the delimiter
+            finalHtml = finalHtml.replace(/<p>---НАПУТСТВИЕ---<\/p>/g, '---НАПУТСТВИЕ---');
+
+            if (finalHtml.includes('---НАПУТСТВИЕ---')) {
+                const parts = finalHtml.split('---НАПУТСТВИЕ---');
+                const mainMsg = parts[0].trim();
+                const summaryMsg = parts[1].trim();
+                finalHtml = mainMsg + `\n<div class="ai-summary">
+                    <strong style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; display: block; margin-bottom: 10px; opacity: 0.8;">🔮 Главный Итог Расклада:</strong>
+                    ${summaryMsg}
+                </div>`;
+            } else {
+                // If AI somehow failed to use the separator, maybe just try to wrap the last paragraph
+                finalHtml = finalHtml.replace(/<p>([^<]+)<\/p>$/, '<div class="ai-summary"><strong style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; display: block; margin-bottom: 10px; opacity: 0.8;">🔮 Главный Итог Расклада:</strong><p>$1</p></div>');
+            }
+
+            // Wrap in main box if it's not already
+            if (!finalHtml.startsWith('<div class="ai-reading-box"')) {
+                finalHtml = `<div class="ai-reading-box">${finalHtml}</div>`;
+            }
+
             // Remove typewriter wrapper HTML if any, just render it inside ai-reading-box directly
             aiText.innerHTML = finalHtml;
 

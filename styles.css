@@ -696,25 +696,31 @@ input:checked+.slider:before {
 }
 
 .ai-summary {
-    background: rgba(212, 175, 55, 0.2);
-    border-left: 4px solid var(--gold);
-    padding: 15px;
-    margin-top: 25px;
-    border-radius: 0 8px 8px 0;
+    background: rgba(212, 175, 55, 0.15);
+    border-left: 5px solid var(--gold);
+    padding: 20px;
+    margin-top: 30px;
+    border-radius: 0 12px 12px 0;
     font-weight: 500;
-    font-size: 1.05rem;
+    font-size: 1.1rem;
     color: var(--gold);
+    box-shadow: inset 0 0 15px rgba(212, 175, 55, 0.1);
 }
 
 [data-theme='light'] .ai-reading-box {
-    background: rgba(0, 0, 0, 0.03);
+    background: #ffffff;
     border: 1px solid rgba(0, 0, 0, 0.1);
-    color: #333;
+    color: #111111;
+    font-weight: 400;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
 [data-theme='light'] .ai-summary {
-    background: rgba(212, 175, 55, 0.15);
-    color: #333;
+    background: rgba(184, 134, 11, 0.1);
+    /* light gold */
+    border-left: 5px solid rgba(184, 134, 11, 0.8);
+    color: #1a0f24;
+    font-weight: 600;
 }
 
 /* Fix Textarea Input Color */
