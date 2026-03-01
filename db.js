@@ -2,13 +2,17 @@ const { Pool } = require('pg');
 
 // We connect to the default postgres database since we are rapidly prototyping locally
 // For production, this should absolutely be a specific application database
-const pool = new Pool({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || process.env.USER,
-    database: process.env.DB_NAME || 'postgres',
-    password: process.env.DB_PASSWORD || '',
-    port: process.env.DB_PORT || 5432,
-});
+const pool = new Pool(
+    process.env.DATABASE_URL
+        ? { connectionString: process.env.DATABASE_URL }
+        : {
+            host: process.env.DB_HOST || 'localhost',
+            user: process.env.DB_USER || process.env.USER,
+            database: process.env.DB_NAME || 'postgres',
+            password: process.env.DB_PASSWORD || '',
+            port: process.env.DB_PORT || 5432,
+        }
+);
 
 async function testConnection() {
     try {
