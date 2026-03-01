@@ -128,8 +128,10 @@ app.post('/api/me', telegramAuth, async (req, res) => {
 });
 
 // OpenAI prompt generator
-const generateAIFortune = async (cards, firstName) => {
+const generateAIFortune = async (cards, firstName, query) => {
     const cardList = cards.map((c, i) => `${i + 1}. ${c.name} ${c.reversed ? "(Перевернутая)" : "(Прямая)"}`).join(', ');
+
+    const queryContext = query ? `Пользователь задал явный вопрос картам: "${query}". Проанализируй эти карты именно в контексте его вопроса, дай мистическое, но конкретное напутствие.` : `Проанализируй эти конкретные карты, дай мистическое, но конкретное напутствие.`;
 
     try {
         const completion = await openai.chat.completions.create({
@@ -138,7 +140,7 @@ const generateAIFortune = async (cards, firstName) => {
                 {
                     role: "system",
                     content: `Ты опытный, загадочный и мудрый таролог с 20-летним стажем. Пользователь вытянул 7 карт судьбы (расклад Подкова: Прошлое, Настоящее, Скрытое, Препятствие, Окружение, Совет, Итог). 
-Проанализируй эти конкретные карты, дай мистическое, но конкретное напутствие. Не используй общие фразы, свяжи значения этих карт в единую историю. 
+${queryContext} Не используй общие фразы, свяжи значения этих карт в единую историю. 
 Ответ верни в формате HTML: используй теги <p> для абзацев. Начни с приветствия по имени (если оно не "Путешественник"). В конце дай короткое напутствие.`
                 },
                 {
@@ -169,20 +171,20 @@ app.post('/api/readings', telegramAuth, async (req, res) => {
             return res.status(403).json({ error: "Not enough energy. Please refill." });
         }
 
-        const { cards } = req.body;
+        const { cards, query } = req.body;
         if (!cards || cards.length !== 7) {
             return res.status(400).json({ error: "7 Cards are required" });
         }
 
         // 2. Generate Real AI Text
-        const generatedText = await generateAIFortune(cards, firstName);
+        const generatedText = await generateAIFortune(cards, firstName, query);
 
         // 3. Decrement Energy
         await db.query('UPDATE users SET energy = energy - 1 WHERE telegram_id = $1', [tgId]);
 
         // 4. Save Reading
-        const query = `INSERT INTO readings (telegram_id, cards_drawn, interpretation) VALUES ($1, $2, $3) RETURNING id`;
-        const result = await db.query(query, [tgId, JSON.stringify(cards), generatedText]);
+        const sqlQuery = `INSERT INTO readings (telegram_id, cards_drawn, interpretation) VALUES ($1, $2, $3) RETURNING id`;
+        const result = await db.query(sqlQuery, [tgId, JSON.stringify(cards), generatedText]);
 
         res.status(201).json({ success: true, id: result.rows[0].id, energy_remaining: userRes.rows[0].energy - 1, interpretation: generatedText });
     } catch (err) {

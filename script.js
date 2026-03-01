@@ -344,14 +344,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const cardEl = document.createElement('div');
                 cardEl.className = 'tarot-card dealt';
 
+                const cardIndex = TAROT_DECK.findIndex(c => c.name === cardData.name);
+                const imagePath = `cards/${cardIndex.toString().padStart(2, '0')}.jpg`;
+
                 cardEl.innerHTML = `
                     <div class="tarot-card-inner">
                         <div class="tarot-card-back"></div>
                         <div class="tarot-card-front" style="transform: rotateY(180deg) ${isReversed ? 'rotateZ(180deg)' : ''}">
-                            <div class="tarot-img-placeholder">${cardData.emoji}</div>
-                            <div class="tarot-name">${cardData.name}</div>
-                            ${isReversed ? '<div style="font-size: 0.6rem; margin-top: 5px; color: #ff6b6b;">(Перевернута)</div>' : ''}
-                            <div style="font-size: 0.55rem; margin-top: 8px; padding: 0 4px; line-height: 1.2;">${cardData.meaning}</div>
+                            <img src="${imagePath}" alt="${cardData.name}" class="tarot-card-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <div class="tarot-img-placeholder" style="display:none; font-size:2rem; margin-bottom:5px;">${cardData.emoji}</div>
+                            <div class="tarot-name" style="font-size: ${isReversed ? '0.65rem' : '0.75rem'}">${cardData.name}</div>
+                            ${isReversed ? '<div style="font-size: 0.55rem; color: #ff6b6b; margin-top: 2px;">(Перевернута)</div>' : ''}
+                            <div style="font-size: 0.5rem; margin-top: ${isReversed ? '2px' : '5px'}; padding: 0 2px; line-height: 1.1;">${cardData.meaning}</div>
                         </div>
                     </div>
                 `;
@@ -405,6 +409,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function generateInterpretation() {
         try {
+            const userQuery = document.getElementById('user-query')?.value?.trim() || '';
             // Fetch real AI response from backend
             const res = await fetch('/api/readings', {
                 method: 'POST',
@@ -413,6 +418,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     'x-telegram-init-data': initData
                 },
                 body: JSON.stringify({
+                    query: userQuery,
                     cards: drawnCards.map(c => ({ name: c.name, reversed: c.isReversed }))
                 })
             });
