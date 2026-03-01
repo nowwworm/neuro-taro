@@ -866,3 +866,66 @@ input:checked+.slider:before {
         grid-column: 2 / 3;
     }
 }
+
+/* Card Zoom Overlay */
+.zoom-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+    z-index: 99999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.zoom-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.zoom-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    padding: 20px;
+}
+
+.zoom-overlay.active .zoom-content {
+    transform: scale(1);
+}
+
+#zoom-img {
+    max-width: 90vw;
+    max-height: 65vh;
+    border-radius: 12px;
+    border: 2px solid var(--gold);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
+}
+
+.zoom-title {
+    color: var(--gold);
+    font-family: 'Cinzel', serif;
+    margin-top: 20px;
+    font-size: 1.5rem;
+    text-align: center;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.zoom-desc {
+    color: #e0e0e0;
+    text-align: center;
+    max-width: 400px;
+    font-size: 0.95rem;
+    margin-top: 10px;
+    line-height: 1.4;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}

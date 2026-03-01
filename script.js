@@ -44,6 +44,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     const historyLoading = document.getElementById('history-loading');
     const historyAccordion = document.getElementById('historyAccordion');
 
+    const zoomOverlay = document.getElementById('card-zoom-overlay');
+    const zoomImg = document.getElementById('zoom-img');
+    const zoomTitle = document.getElementById('zoom-title');
+    const zoomDesc = document.getElementById('zoom-desc');
+
+    if (zoomOverlay) {
+        zoomOverlay.addEventListener('click', () => {
+            zoomOverlay.classList.remove('active');
+        });
+    }
+
+    window.openCardZoom = function (name, imagePath, description, isReversed) {
+        zoomImg.src = imagePath;
+        if (isReversed) {
+            zoomImg.style.transform = 'rotate(180deg)';
+            zoomTitle.innerHTML = `${name} <span style="color:#ff6b6b; font-size:0.7em;">(Перевернута)</span>`;
+        } else {
+            zoomImg.style.transform = 'none';
+            zoomTitle.textContent = name;
+        }
+        zoomDesc.textContent = description;
+        zoomOverlay.classList.add('active');
+    };
+
     // --- THEME INIT ---
     const themeToggle = document.getElementById('theme-toggle');
     const savedTheme = localStorage.getItem('neuro-tarot-theme') || 'dark';
@@ -378,6 +402,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (!this.classList.contains('flipped')) {
                         this.classList.add('flipped');
                         checkAllFlipped();
+                    } else {
+                        window.openCardZoom(cardData.name, imagePath, cardData.meaning, isReversed);
                     }
                 });
 
@@ -473,6 +499,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                         subtitle.innerText = cardData.name + (isReversed ? ' (П)' : '');
                         subtitle.style.opacity = '1';
                         checkHoldemFlipped();
+                    } else {
+                        window.openCardZoom(cardData.name, imagePath, cardData.meaning, isReversed);
                     }
                 });
             });
