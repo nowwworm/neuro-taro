@@ -484,7 +484,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 cardEl.style.opacity = '0'; // hide initially
 
                 cardEl.innerHTML = `
-                    <div class="tarot-card-inner" style="width: 100%; height: 100%; position: relative;">
+                    <div class="tarot-card-inner">
                         <!-- Back -->
                         <div class="deck-card" style="box-shadow: 0 0 5px rgba(0,0,0,0.5);"></div>
                         <!-- Front -->
@@ -498,7 +498,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 const subtitle = document.createElement('div');
                 subtitle.className = 'holdem-subtitle';
-                subtitle.innerText = "Нажмите чтобы открыть";
+                subtitle.innerText = "";
 
                 slot.appendChild(cardEl);
                 slot.appendChild(subtitle);
@@ -516,6 +516,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                 });
             });
+
+            // 3. Auto-flip Holdem cards sequentially
+            setTimeout(() => {
+                const holdemCards = document.querySelectorAll('.holdem-card');
+                holdemCards.forEach((card, idx) => {
+                    setTimeout(() => {
+                        card.click();
+                    }, idx * 600);
+                });
+            }, 1000);
         }, 800);
 
         function checkHoldemFlipped() {
