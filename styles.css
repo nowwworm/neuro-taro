@@ -1,15 +1,14 @@
 :root {
-    /* Telegram Theme Integration */
-    --bg-dark: var(--tg-theme-bg-color, #0a0514);
-    --text-light: var(--tg-theme-text-color, #e0d8ea);
-    --gold: var(--tg-theme-button-color, #d4af37);
-    --gold-text: var(--tg-theme-button-text-color, #1a0f24);
+    /* Base Colors - Explicitly detaching from Telegram theme to preserve the Tarot space look */
+    --bg-dark: #0a0514;
+    --text-light: #e0d8ea;
+    --gold: #d4af37;
+    --gold-text: #1a0f24;
 
     /* Custom Theme Colors */
     --gold-dim: rgba(212, 175, 55, 0.4);
     --gold-glow: rgba(212, 175, 55, 0.8);
     --card-bg: rgba(26, 15, 36, 0.85);
-    /* Сделал чуть темнее для читаемости на светлом фоне ТГ */
     --glass-border: rgba(212, 175, 55, 0.2);
     --theme-bg-override: var(--bg-dark);
 }
