@@ -26,14 +26,28 @@
 
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-transparent py-3">
-        <div class="container">
+        <div class="container d-flex align-items-center justify-content-between">
             <a class="navbar-brand font-cinzel text-gold text-shadow" href="index.html">
                 <i class="fa-solid fa-moon"></i> Нейро-Таро
             </a>
-            <button class="navbar-toggler border-gold" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+
+            <div class="d-flex align-items-center">
+                <!-- Theme Toggle Always Visible -->
+                <div class="d-flex align-items-center me-3">
+                    <i class="fa-solid fa-sun text-gold me-1" style="font-size: 0.8rem;"></i>
+                    <label class="switch mb-0" style="transform: scale(0.8)">
+                        <input type="checkbox" id="theme-toggle">
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fa-solid fa-moon text-secondary ms-1" style="font-size: 0.8rem;"></i>
+                </div>
+
+                <button class="navbar-toggler border-gold" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
@@ -49,14 +63,6 @@
                         height="32" style="display: none;">
                     <span id="tg-name" class="me-3 fw-bold">...</span>
                     <span class="badge bg-gold text-dark fs-6" id="tg-energy">⚡️ Загрузка...</span>
-                </div>
-                <div class="d-flex align-items-center ms-lg-3 mt-3 mt-lg-0">
-                    <i class="fa-solid fa-sun text-gold me-2"></i>
-                    <label class="switch">
-                        <input type="checkbox" id="theme-toggle">
-                        <span class="slider round"></span>
-                    </label>
-                    <i class="fa-solid fa-moon text-secondary ms-2"></i>
                 </div>
             </div>
         </div>
@@ -94,12 +100,11 @@
                     <div class="mb-4 text-start">
                         <label for="user-query" class="form-label text-gold font-montserrat fw-bold"><i
                                 class="fa-solid fa-star pe-2"></i>Ваш вопрос картам (необязательно):</label>
-                        <textarea class="form-control"
-                            style="background: rgba(0,0,0,0.5); border: 1px solid rgba(212, 175, 55, 0.4); color: white; resize: none;"
-                            id="user-query" rows="2" placeholder="Например: Чего ожидать от новой работы?"></textarea>
+                        <textarea class="form-control tarot-input" id="user-query" rows="2"
+                            placeholder="Например: Чего ожидать от новой работы?"></textarea>
                     </div>
 
-                    <button id="start-btn" class="mystic-btn w-100 w-md-auto mx-auto d-block mb-3">Сделать
+                    <button id="start-btn" class="mystic-btn w-100 w-md-auto mx-auto mb-3">Сделать
                         расклад</button>
                     <button id="history-btn" class="mystic-btn outline w-100 w-md-auto mx-auto d-block mt-2"><i
                             class="fa-solid fa-book-open"></i> Моя история</button>
@@ -153,7 +158,7 @@
                             судьбы...</p>
                     </div>
 
-                    <div id="ai-text" class="ai-text font-montserrat hidden">
+                    <div id="ai-text" class="ai-text font-montserrat hidden ai-reading-box">
                         <!-- Text injected via JS -->
                     </div>
 

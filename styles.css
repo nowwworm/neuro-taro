@@ -670,6 +670,58 @@ input:checked+.slider:before {
     }
 }
 
+@keyframes dealToHoldem {
+    0% {
+        transform: scale(0.5) translateY(-50px) translateX(0);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1) translateY(0) translateX(0);
+        opacity: 1;
+    }
+}
+
+/* AI Reading Box */
+.ai-reading-box {
+    padding: 20px;
+    border-radius: 10px;
+    background: rgba(212, 175, 55, 0.05);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    margin-top: 15px;
+    color: var(--gold);
+    line-height: 1.6;
+    text-align: left;
+    font-size: 0.95rem;
+}
+
+[data-theme='light'] .ai-reading-box {
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #333;
+}
+
+/* Fix Textarea Input Color */
+.tarot-input {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    color: white;
+    resize: none;
+}
+
+[data-theme='light'] .tarot-input {
+    background: rgba(255, 255, 255, 0.7);
+    color: #111;
+}
+
+.tarot-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+[data-theme='light'] .tarot-input::placeholder {
+    color: rgba(0, 0, 0, 0.4);
+}
+
 /* Layout Toggle */
 .layout-toggle .btn {
     color: var(--gold);

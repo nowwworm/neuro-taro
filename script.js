@@ -77,7 +77,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     tg.MainButton.show();
 
     // Hide HTML button if we use MainButton (optional, but cleaner for mobile)
-    startBtn.style.display = 'none';
+    if (tg.initDataUnsafe && Object.keys(tg.initDataUnsafe).length > 0) {
+        startBtn.classList.add('d-none');
+    }
 
     let drawnCards = [];
     let animationTimeout;
