@@ -433,7 +433,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         setTimeout(() => {
             drawnCards.forEach((cardData, index) => {
                 const isReversed = cardData.isReversed;
-                const imageFilename = cardData.id.toString().padStart(2, '0') + '.jpg';
+                const cardIndex = TAROT_DECK.findIndex(c => c.name === cardData.name);
+                const imageFilename = cardIndex.toString().padStart(2, '0') + '.jpg';
                 const imagePath = `cards/${imageFilename}`;
 
                 const slot = document.createElement('div');

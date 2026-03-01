@@ -85,23 +85,20 @@ app.post('/api/me', telegramAuth, async (req, res) => {
         const now = new Date();
 
         if (userRes.rows.length === 0) {
-            // New user gets 1 free energy immediately
+            // New user gets 100 free energy immediately for testing
             const insertQuery = `
                 INSERT INTO users (telegram_id, first_name, avatar_url, energy, last_free_refill) 
-                VALUES ($1, $2, $3, 1, $4) RETURNING *
+                VALUES ($1, $2, $3, 100, $4) RETURNING *
             `;
             const result = await db.query(insertQuery, [tgId, firstName, avatarUrl, now]);
             user = result.rows[0];
         } else {
             user = userRes.rows[0];
 
-            // Check for daily free refill (if energy is 0 and 24h passed)
-            const lastRefill = new Date(user.last_free_refill);
-            const hoursSinceRefill = (now - lastRefill) / (1000 * 60 * 60);
-
-            if (user.energy === 0 && hoursSinceRefill >= 24) {
+            // Grant 100 energy for testing if below 100
+            if (user.energy < 100) {
                 const updateQuery = `
-                    UPDATE users SET energy = 1, last_free_refill = $1 
+                    UPDATE users SET energy = 100, last_free_refill = $1 
                     WHERE telegram_id = $2 RETURNING *
                 `;
                 const result = await db.query(updateQuery, [now, tgId]);
