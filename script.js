@@ -382,14 +382,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const cardIndex = TAROT_DECK.findIndex(c => c.name === cardData.name);
                 const imagePath = `cards/${cardIndex.toString().padStart(2, '0')}.jpg`;
 
+                // Calculate dynamic font size to prevent overflow for long strings
+                const nameLen = cardData.name.length;
+                let nameFontSize = isReversed ? 0.65 : 0.75;
+                if (nameLen > 13) nameFontSize = isReversed ? 0.48 : 0.52;
+                else if (nameLen > 9) nameFontSize = isReversed ? 0.55 : 0.62;
+
                 cardEl.innerHTML = `
                     <div class="tarot-card-inner">
                         <div class="tarot-card-back"></div>
                         <div class="tarot-card-front" style="transform: rotateY(180deg)">
                             <img src="${imagePath}" alt="${cardData.name}" class="tarot-card-image" onerror="this.onerror=null; this.src='https://placehold.co/100x150/111/d4af37?text=*'; this.style.display='block'; this.nextElementSibling.style.display='none';">
                             <div class="tarot-img-placeholder" style="display:none; font-size:2rem; margin-bottom:5px;">${cardData.emoji}</div>
-                            <div class="tarot-name" style="font-size: ${isReversed ? '0.65rem' : '0.75rem'}">${cardData.name}</div>
-                            ${isReversed ? '<div style="font-size: 0.55rem; color: #ff6b6b; margin-top: 2px;">(Перевернута)</div>' : ''}
+                            <div class="tarot-name" style="font-size: ${nameFontSize}rem; line-height: 1.1;">${cardData.name}</div>
+                            ${isReversed ? '<div style="font-size: 0.50rem; color: #ff6b6b; margin-top: 2px;">(Перевернута)</div>' : ''}
                             <div style="font-size: 0.45rem; margin-top: ${isReversed ? '2px' : '4px'}; padding: 0 4px; line-height: 1.1;">${cardData.meaning}</div>
                         </div>
                     </div>
@@ -463,6 +469,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const imageFilename = cardIndex.toString().padStart(2, '0') + '.jpg';
                 const imagePath = `cards/${imageFilename}`;
 
+                // Calculate dynamic font size for Holdem Mode
+                const nameLen = cardData.name.length;
+                let hNameFontSize = isReversed ? 0.45 : 0.55;
+                if (nameLen > 13) hNameFontSize = isReversed ? 0.35 : 0.40;
+                else if (nameLen > 9) hNameFontSize = isReversed ? 0.40 : 0.48;
+
                 const slot = document.createElement('div');
                 slot.className = 'holdem-card-slot';
 
@@ -478,8 +490,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <!-- Front -->
                         <div class="tarot-card-front" style="transform: rotateY(180deg); position: absolute; width: 100%; height: 100%; backface-visibility: hidden; background: #111; border: 1px solid var(--gold); border-radius: 5px; padding: 2px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;">
                             <img src="${imagePath}" style="width: 100%; height: 60%; object-fit: cover; border-radius: 3px;" onerror="this.onerror=null; this.src='https://placehold.co/100x150/111/d4af37?text=*';">
-                            <div style="font-size: ${isReversed ? '0.45rem' : '0.55rem'}; color: var(--gold); font-family: 'Cinzel', serif; text-align: center; margin-top: 3px; font-weight: bold; line-height: 1;">${cardData.name}</div>
-                            ${isReversed ? '<div style="font-size: 0.45rem; color: #ff6b6b; margin-top: 1px;">(Перевернута)</div>' : ''}
+                            <div style="font-size: ${hNameFontSize}rem; color: var(--gold); font-family: 'Cinzel', serif; text-align: center; margin-top: 3px; font-weight: bold; line-height: 1.1;">${cardData.name}</div>
+                            ${isReversed ? '<div style="font-size: 0.38rem; color: #ff6b6b; margin-top: 1px;">(Перевернута)</div>' : ''}
                         </div>
                     </div>
                 `;
