@@ -608,6 +608,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (cardData) {
                     const cardIndex = TAROT_DECK.findIndex(c => c.name === cardData.name);
                     const imagePath = `cards/${cardIndex.toString().padStart(2, '0')}.jpg`;
+
+                    // Safely pull in any orphaned paragraphs ChatGPT mistakenly placed outside the div!
+                    let nextNode = block.nextSibling;
+                    while (nextNode) {
+                        if (nextNode.nodeType === Node.ELEMENT_NODE &&
+                            (nextNode.classList.contains('interpretation-block') || nextNode.classList.contains('ai-summary'))) {
+                            break;
+                        }
+                        let nodeToMove = nextNode;
+                        nextNode = nextNode.nextSibling;
+                        block.appendChild(nodeToMove);
+                    }
+
                     const innerHtml = block.innerHTML;
 
                     const encName = encodeURIComponent(cardData.name);
