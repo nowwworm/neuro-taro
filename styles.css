@@ -282,6 +282,18 @@ textarea {
     transform: rotate(15deg);
 }
 
+/* Linear Layout */
+.linear-container {
+    padding-bottom: 50px;
+}
+
+.linear-slot {
+    position: relative !important;
+    transform: none !important;
+    flex-shrink: 0;
+    margin-bottom: 30px;
+}
+
 @media (max-width: 900px) {
     .horseshoe-container {
         height: auto;

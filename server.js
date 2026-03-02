@@ -136,17 +136,17 @@ const generateAIFortune = async (cards, firstName, query) => {
             messages: [
                 {
                     role: "system",
-                    content: `Ты опытный, загадочный и мудрый таролог с 20-летним стажем. Пользователь вытянул 7 карт судьбы (расклад Подкова: Прошлое, Настоящее, Скрытое, Препятствие, Окружение, Совет, Итог). 
+                    content: `Ты опытный, загадочный и мудрый таролог с 20-летним стажем. Пользователь вытянул ${cards.length} карт(ы) судьбы. 
 ${queryContext} Не используй общие фразы, свяжи значения этих карт в единую историю. 
 Ответ верни строго в формате HTML.
-ОБЯЗАТЕЛЬНО создай ровно 7 блоков (по одному для каждой вытянутой карты) по такому шаблону:
+ОБЯЗАТЕЛЬНО создай ровно ${cards.length} блоков (по одному для каждой вытянутой карты) по такому шаблону:
 <div class="interpretation-block" data-card="Точное_Имя_Карты">
     <h4>Позиция: Точное_Имя_Карты (Прямая/Перевернутая)</h4>
     <p>Твоё толкование этой карты...</p>
 </div>
 (Вместо Точное_Имя_Карты подставь точное имя карты из списка, например "Шут", без слова "Перевернутая" в самом data-card!). 
-ВАЖНО: Должно быть ровно 7 блоков interpretation-block. Не пропусти 7-ю карту "Итог"!
-А УЖЕ ПОСЛЕ описания всех 7 карт, в самом конце дай общее главное напутствие, обернув его в <div class="ai-summary">...</div>.`
+ВАЖНО: Должно быть ровно ${cards.length} блоков interpretation-block. Не пропусти ни одной вытянутой карты!
+А УЖЕ ПОСЛЕ описания всех ${cards.length} карт, в самом конце дай общее главное напутствие, обернув его в <div class="ai-summary">...</div>.`
                 },
                 {
                     role: "user",
@@ -177,8 +177,8 @@ app.post('/api/readings', telegramAuth, async (req, res) => {
         }
 
         const { cards, query } = req.body;
-        if (!cards || cards.length !== 7) {
-            return res.status(400).json({ error: "7 Cards are required" });
+        if (!cards || !Array.isArray(cards) || cards.length === 0 || cards.length > 10) {
+            return res.status(400).json({ error: "Invalid cards array. Require 1-10 cards." });
         }
 
         // 2. Generate Real AI Text

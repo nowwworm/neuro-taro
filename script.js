@@ -93,6 +93,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     const tgName = document.getElementById('tg-name');
     const tgEnergy = document.getElementById('tg-energy');
 
+    // Update spread title on change
+    const layoutRadios = document.querySelectorAll('input[name="layout-options"]');
+    layoutRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            const val = e.target.value;
+            const titleEl = document.getElementById('spread-title-text');
+            const descEl = document.getElementById('spread-desc-text');
+            if (val === 'linear') {
+                titleEl.textContent = 'Расклад «3 Карты»';
+                descEl.textContent = 'Быстрый расклад из 3 карт: Прошлое, Настоящее и Будущее. Идеально для быстрой оценки ситуации.';
+            } else if (val === 'holdem') {
+                titleEl.textContent = 'Расклад «На Сукне»';
+                descEl.textContent = 'Интерактивный расклад из 7 карт с раздачей из колоды, как за покерным столом.';
+            } else {
+                titleEl.textContent = 'Расклад «Подкова»';
+                descEl.textContent = 'Классический расклад из 7 карт, который поможет разобраться в текущей ситуации, узнать скрытые влияния и получить совет от нейросети на будущее.';
+            }
+        });
+    });
+
     // Setup MainButton for "Сделать расклад"
     tg.MainButton.text = "Сделать расклад";
     tg.MainButton.color = tg.themeParams.button_color || "#d4af37";
@@ -253,6 +273,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (layout === 'holdem') {
             document.getElementById('holdem-section').classList.remove('hidden');
             dealHoldemCards();
+        } else if (layout === 'linear') {
+            document.getElementById('linear-section').classList.remove('hidden');
+            dealLinearCards();
         } else {
             spreadSection.classList.remove('hidden');
             dealCards();
@@ -267,6 +290,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         drawnCards = [];
         resultSection.classList.add('hidden');
         spreadSection.classList.add('hidden');
+        document.getElementById('linear-section').classList.add('hidden');
         document.getElementById('holdem-section').classList.add('hidden');
         document.getElementById('holdem-container').innerHTML = '';
         document.getElementById('deck-area').innerHTML = '';
@@ -430,6 +454,73 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (flippedCards.length === 7) {
             setTimeout(() => {
                 // Automatically show interpretation instead of displaying a button
+                resultSection.classList.remove('hidden');
+                generateInterpretation();
+            }, 800);
+        }
+    }
+
+    function dealLinearCards() {
+        drawnCards = getRandomCards(3);
+        const slots = document.querySelectorAll('.linear-slot');
+
+        slots.forEach((slot, index) => {
+            setTimeout(() => {
+                const cardData = drawnCards[index];
+                const isReversed = Math.random() > 0.7;
+                drawnCards[index].isReversed = isReversed;
+
+                const cardEl = document.createElement('div');
+                cardEl.className = 'tarot-card dealt';
+
+                const cardIndex = TAROT_DECK.findIndex(c => c.name === cardData.name);
+                const imagePath = `cards/${cardIndex.toString().padStart(2, '0')}.jpg`;
+
+                // Calculate dynamic font size to prevent overflow for long strings
+                const nameLen = cardData.name.length;
+                let nameFontSize = isReversed ? 0.65 : 0.75;
+                if (nameLen > 13) nameFontSize = isReversed ? 0.48 : 0.52;
+                else if (nameLen > 9) nameFontSize = isReversed ? 0.55 : 0.62;
+
+                cardEl.innerHTML = `
+                    <div class="tarot-card-inner">
+                        <div class="tarot-card-back"></div>
+                        <div class="tarot-card-front" style="transform: rotateY(180deg)">
+                            <img src="${imagePath}" alt="${cardData.name}" class="tarot-card-image" onerror="this.onerror=null; this.src='https://placehold.co/100x150/111/d4af37?text=*'; this.style.display='block'; this.nextElementSibling.style.display='none';">
+                            <div class="tarot-img-placeholder" style="display:none; font-size:2rem; margin-bottom:5px;">${cardData.emoji}</div>
+                            <div class="tarot-name" style="font-size: ${nameFontSize}rem; line-height: 1.1;">${cardData.name}</div>
+                            ${isReversed ? '<div style="font-size: 0.50rem; color: #ff6b6b; margin-top: 2px;">(Перевернута)</div>' : ''}
+                            <div style="font-size: 0.45rem; margin-top: ${isReversed ? '2px' : '4px'}; padding: 0 4px; line-height: 1.1;">${cardData.meaning}</div>
+                        </div>
+                    </div>
+                `;
+
+                slot.appendChild(cardEl);
+
+                cardEl.addEventListener('click', function () {
+                    if (!this.classList.contains('flipped')) {
+                        this.classList.add('flipped');
+                        checkAllLinearFlipped();
+                    } else {
+                        window.openCardZoom(cardData.name, imagePath, cardData.meaning, isReversed);
+                    }
+                });
+
+                setTimeout(() => {
+                    if (!cardEl.classList.contains('flipped')) {
+                        cardEl.classList.add('flipped');
+                        checkAllLinearFlipped();
+                    }
+                }, 3000 + (index * 1500));
+
+            }, index * 800);
+        });
+    }
+
+    function checkAllLinearFlipped() {
+        const flippedCards = document.querySelectorAll('.linear-section .tarot-card.flipped');
+        if (flippedCards.length === 3) {
+            setTimeout(() => {
                 resultSection.classList.remove('hidden');
                 generateInterpretation();
             }, 800);

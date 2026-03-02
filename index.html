@@ -79,21 +79,27 @@
         <section class="row justify-content-center w-100" id="hero-section">
             <div class="col-12 col-md-10 col-lg-8">
                 <div class="glass-panel text-center p-4 p-md-5">
-                    <h2 class="font-cinzel text-gold mb-4">Расклад «Подкова»</h2>
-                    <p class="font-montserrat lead text-light-alpha mb-4">Классический расклад из 7 карт, который
+                    <h2 class="font-cinzel text-gold mb-4" id="spread-title-text">Расклад «Подкова»</h2>
+                    <p class="font-montserrat lead text-light-alpha mb-4" id="spread-desc-text"
+                        style="min-height: 72px;">Классический расклад из 7 карт, который
                         поможет разобраться в текущей ситуации, узнать скрытые влияния и получить совет от нейросети на
                         будущее.</p>
 
-                    <div class="layout-toggle mb-4 d-flex justify-content-center"
-                        style="box-shadow: 0 0 10px rgba(0,0,0,0.5); border-radius: 5px;">
+                    <div class="layout-toggle mb-4 d-flex justify-content-center flex-wrap"
+                        style="box-shadow: 0 0 10px rgba(0,0,0,0.5); border-radius: 5px; overflow: hidden;">
+                        <input type="radio" class="btn-check" name="layout-options" id="layout-linear" value="linear" />
+                        <label
+                            class="btn btn-outline-warning rounded-0 border-0 border-end border-warning font-montserrat fw-bold px-3 py-2"
+                            for="layout-linear">3 Карты</label>
+
                         <input type="radio" class="btn-check" name="layout-options" id="layout-classic" value="classic"
                             checked />
-                        <label class="btn btn-outline-warning rounded-end-0 font-montserrat fw-bold px-4"
-                            for="layout-classic">Классика</label>
+                        <label
+                            class="btn btn-outline-warning rounded-0 border-0 border-end border-warning font-montserrat fw-bold px-3 py-2"
+                            for="layout-classic">Подкова</label>
 
                         <input type="radio" class="btn-check" name="layout-options" id="layout-holdem" value="holdem" />
-                        <label
-                            class="btn btn-outline-warning rounded-start-0 border-start-0 font-montserrat fw-bold px-4"
+                        <label class="btn btn-outline-warning rounded-0 border-0 font-montserrat fw-bold px-3 py-2"
                             for="layout-holdem">На Сукне</label>
                     </div>
 
@@ -124,6 +130,18 @@
                 <div class="card-slot" id="slot-5" data-position="5. Окружение"></div>
                 <div class="card-slot" id="slot-6" data-position="6. Совет"></div>
                 <div class="card-slot" id="slot-7" data-position="7. Итог"></div>
+            </div>
+        </section>
+
+        <!-- Linear Section -->
+        <section class="linear-section hidden w-100 text-center" id="linear-section">
+            <h3 class="spread-title font-cinzel text-gold mb-5">Нити Времени (Прошлое, Настоящее, Будущее)</h3>
+
+            <div
+                class="linear-container mx-auto d-flex justify-content-center align-items-center gap-2 gap-md-4 flex-wrap">
+                <div class="card-slot linear-slot" id="linear-slot-1" data-position="1. Прошлое"></div>
+                <div class="card-slot linear-slot" id="linear-slot-2" data-position="2. Настоящее"></div>
+                <div class="card-slot linear-slot" id="linear-slot-3" data-position="3. Будущее"></div>
             </div>
         </section>
 
