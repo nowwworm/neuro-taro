@@ -319,7 +319,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('holdem-section').classList.add('hidden');
         document.getElementById('holdem-container').innerHTML = '';
         document.getElementById('deck-area').innerHTML = '';
-        document.getElementById('holdem-done-btn').classList.add('hidden');
 
         heroSection.classList.remove('hidden');
         aiText.innerHTML = '';
@@ -347,10 +346,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     resetBtn.addEventListener('click', resetApp);
     tg.BackButton.onClick(() => {
-        if (isHistoryOpen) {
-            historyModal.hide();
-        } else {
-            resetApp();
+        try {
+            if (isHistoryOpen) {
+                if (typeof historyModal !== 'undefined' && historyModal !== null) {
+                    historyModal.hide();
+                } else if (typeof bootstrap !== 'undefined') {
+                    // Fallback to bootstrap global if instance is somehow lost
+                    bootstrap.Modal.getInstance(historyModalEl)?.hide();
+                }
+            } else {
+                resetApp();
+            }
+        } catch (err) {
+            console.error('Error handling back button click:', err);
+            // Emergency fallback just in case UI gets stuck
+            window.location.reload();
         }
     });
 
