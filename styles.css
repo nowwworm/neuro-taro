@@ -1076,3 +1076,65 @@ input:checked+.slider:before {
 [data-theme="light"] .navbar-toggler-icon {
     filter: invert(0.8);
 }
+/* Holdem Card Front Classes */
+.holdem-front {
+    transform: rotateY(180deg);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    background: #111;
+    border: 1px solid var(--gold);
+    border-radius: 5px;
+    padding: 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+.holdem-img {
+    width: 100%;
+    height: 60%;
+    object-fit: cover;
+    border-radius: 3px;
+}
+.holdem-name {
+    color: var(--gold);
+    font-family: 'Cinzel', serif;
+    text-align: center;
+    margin-top: 3px;
+    font-weight: bold;
+    line-height: 1.1;
+}
+.holdem-reversed {
+    font-size: 0.38rem;
+    color: #ff6b6b;
+    margin-top: 1px;
+}
+
+/* Light Theme overrides for Casino Table (Holdem Spread) */
+[data-theme='light'] .holdem-section .casino-table {
+    background: radial-gradient(circle, #3a8a5b 0%, #205c3b 100%);
+    border: 2px solid rgba(184, 134, 11, 0.8);
+    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.1), 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme='light'] .holdem-section .casino-table .text-gold {
+    color: #fdfaf6 !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme='light'] .holdem-subtitle {
+    color: #fdfaf6;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    font-weight: 500;
+}
+
+[data-theme='light'] .holdem-front {
+    background: #fdfaf6;
+    border: 1px solid rgba(184, 134, 11, 0.6);
+}
+
+[data-theme='light'] .holdem-name {
+    color: #2d1a3f;
+}

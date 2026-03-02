@@ -547,10 +547,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <!--Back -->
                         <div class="deck-card" style="box-shadow: 0 0 5px rgba(0,0,0,0.5);"></div>
                         <!--Front -->
-                        <div class="tarot-card-front" style="transform: rotateY(180deg); position: absolute; width: 100%; height: 100%; backface-visibility: hidden; background: #111; border: 1px solid var(--gold); border-radius: 5px; padding: 2px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;">
-                            <img src="${imagePath}" style="width: 100%; height: 60%; object-fit: cover; border-radius: 3px;" onerror="this.onerror=null; this.src='https://placehold.co/100x150/111/d4af37?text=*';">
-                            <div style="font-size: ${hNameFontSize}rem; color: var(--gold); font-family: 'Cinzel', serif; text-align: center; margin-top: 3px; font-weight: bold; line-height: 1.1;">${cardData.name}</div>
-                            ${isReversed ? '<div style="font-size: 0.38rem; color: #ff6b6b; margin-top: 1px;">(Перевернута)</div>' : ''}
+                        <div class="tarot-card-front holdem-front">
+                            <img src="${imagePath}" class="holdem-img" onerror="this.onerror=null; this.src='https://placehold.co/100x150/111/d4af37?text=*';">
+                            <div class="holdem-name" style="font-size: ${hNameFontSize}rem;">${cardData.name}</div>
+                            ${isReversed ? '<div class="holdem-reversed">(Перевернута)</div>' : ''}
                         </div>
                     </div>
                 `;
