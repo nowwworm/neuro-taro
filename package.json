@@ -12,6 +12,9 @@
     "test:all": "npm run test && npm run test:pdf && npm run test:upload",
     "start": "node server.js"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

@@ -1,0 +1,13 @@
+node_modules/
+venv/
+.env
+.git/
+allure-results/
+allure-report/
+test-results/
+playwright-report/
+tests/
+playwright.config.js
+scripts/
+*.log
+.netlify/
