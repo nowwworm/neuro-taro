@@ -632,7 +632,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             let finalHtml = data.interpretation || "<p>Духи молчат...</p>";
 
             // Strip out random markdown HTML wrapper blocks if ChatGPT hallucinates them
-            finalHtml = finalHtml.replace(/```html\s * /i, '').replace(/```\s*$/i, '');
+            finalHtml = finalHtml.replace(/```html\s*/ig, '').replace(/```\s*/ig, '');
 
             // 1. Process structured interpretation blocks
             const parser = new DOMParser();
@@ -670,6 +670,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                         nextNode = nextNode.nextSibling;
                         block.appendChild(nodeToMove);
                     }
+
+                    // Strip any hallucinated <img> tags from the AI's HTML to prevent huge broken images
+                    const aiImages = block.querySelectorAll('img');
+                    aiImages.forEach(img => img.remove());
 
                     const innerHtml = block.innerHTML;
 
