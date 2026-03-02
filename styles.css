@@ -287,7 +287,7 @@ textarea {
         height: auto;
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 20px 10px;
+        gap: 50px 10px;
         justify-items: center;
         padding-bottom: 50px;
         max-width: 100%;
@@ -296,6 +296,7 @@ textarea {
     /* Make the 7th card span full width for symmetry */
     #slot-7 {
         grid-column: 2 / 3;
+        margin-top: 20px;
     }
 
     .card-slot {
