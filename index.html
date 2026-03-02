@@ -79,7 +79,7 @@
         <section class="row justify-content-center w-100" id="hero-section">
             <div class="col-12 col-md-10 col-lg-8">
                 <div class="glass-panel text-center p-4 p-md-5">
-                    <h2 class="font-cinzel text-gold mb-4" id="spread-title-text">Расклад «Подкова»</h2>
+                    <h2 class="font-cinzel text-gold mb-4" id="spread-title-text">Расклад «Подкова (Классика)»</h2>
                     <p class="font-montserrat lead text-light-alpha mb-4" id="spread-desc-text"
                         style="min-height: 72px;">Классический расклад из 7 карт, который
                         поможет разобраться в текущей ситуации, узнать скрытые влияния и получить совет от нейросети на
@@ -106,19 +106,22 @@
                         <label class="btn btn-outline-warning rounded-1 font-montserrat fw-bold px-2 py-1 text-nowrap"
                             for="layout-blindspot">4: Пятно</label>
 
-                        <input type="radio" class="btn-check" name="layout-options" id="layout-classic" value="classic"
-                            checked />
-                        <label class="btn btn-outline-warning rounded-1 font-montserrat fw-bold px-2 py-1 text-nowrap"
-                            for="layout-classic">7: Подкова</label>
+                        <div class="btn-group" role="group">
+                            <input type="radio" class="btn-check" name="layout-options" id="layout-classic"
+                                value="classic" checked />
+                            <label class="btn btn-outline-warning font-montserrat fw-bold px-2 py-1 text-nowrap"
+                                for="layout-classic">7: Подкова (Классика)</label>
+
+                            <input type="radio" class="btn-check" name="layout-options" id="layout-holdem"
+                                value="holdem" />
+                            <label class="btn btn-outline-warning font-montserrat fw-bold px-2 py-1 text-nowrap"
+                                for="layout-holdem">7: Подкова (Сукно)</label>
+                        </div>
 
                         <input type="radio" class="btn-check" name="layout-options" id="layout-station"
                             value="station" />
                         <label class="btn btn-outline-warning rounded-1 font-montserrat fw-bold px-2 py-1 text-nowrap"
                             for="layout-station">7: Вокзал</label>
-
-                        <input type="radio" class="btn-check" name="layout-options" id="layout-holdem" value="holdem" />
-                        <label class="btn btn-outline-warning rounded-1 font-montserrat fw-bold px-2 py-1 text-nowrap"
-                            for="layout-holdem">Сукно</label>
                     </div>
 
                     <div class="mb-4 text-start">
