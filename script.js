@@ -657,7 +657,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 if (cardData) {
                     const cardIndex = TAROT_DECK.findIndex(c => c.name === cardData.name);
-                    const imagePath = `cards / ${cardIndex.toString().padStart(2, '0')}.jpg`;
+                    const imagePath = `cards/${cardIndex.toString().padStart(2, '0')}.jpg`;
 
                     // Safely pull in any orphaned paragraphs ChatGPT mistakenly placed outside the div!
                     let nextNode = block.nextSibling;
@@ -677,14 +677,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const encDesc = encodeURIComponent(cardData.meaning);
 
                     block.innerHTML = `
-            < div style = "position: relative; display: inline-block; flex-shrink: 0; width: 60px; height: 95px;" >
+                        <div style="position: relative; display: inline-block; flex-shrink: 0; width: 60px; height: 95px;">
                             <img src="${imagePath}" class="interpretation-img" style="cursor: pointer; position: absolute; top:0; left:0; width: 100%; height: 100%; transition: transform 0.2s; margin: 0;" onmouseover="this.style.transform='scale(1.05)';" onmouseout="this.style.transform='scale(1)';" onclick="window.openCardZoom(decodeURIComponent('${encName}'), '${imagePath}', decodeURIComponent('${encDesc}'), ${cardData.isReversed})" onerror="this.onerror=null; this.src='https://placehold.co/100x150/111/d4af37?text=*';">
                             <div style="position: absolute; bottom: -8px; right: -8px; font-size: 1.1rem; pointer-events: none; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">🔍</div>
                         </div>
                         <div class="interpretation-text">
                             ${innerHtml}
                         </div>
-        `;
+                    `;
                 }
             });
 
@@ -695,10 +695,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 finalHtml = finalHtml.replace(/<p>---НАПУТСТВИЕ---<\/p>/g, '---НАПУТСТВИЕ---');
                 if (finalHtml.includes('---НАПУТСТВИЕ---')) {
                     const parts = finalHtml.split('---НАПУТСТВИЕ---');
-                    finalHtml = parts[0].trim() + `\n < div class="ai-summary" >
-            <strong style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; display: block; margin-bottom: 10px; opacity: 0.8;">🔮 Главный Итог Расклада:</strong>
+                    finalHtml = parts[0].trim() + `\n<div class="ai-summary">
+                        <strong style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; display: block; margin-bottom: 10px; opacity: 0.8;">🔮 Главный Итог Расклада:</strong>
                         ${parts[1].trim()}
-                    </div > `;
+                    </div>`;
                 }
             }
 
@@ -709,7 +709,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             // Wrap in main box if it's not already
             if (!finalHtml.startsWith('<div class="ai-reading-box"')) {
-                finalHtml = `< div class="ai-reading-box" > ${finalHtml}</div > `;
+                finalHtml = `<div class="ai-reading-box">${finalHtml}</div>`;
             }
 
             // Render it
