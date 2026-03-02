@@ -100,9 +100,21 @@ document.addEventListener('DOMContentLoaded', async () => {
             const val = e.target.value;
             const titleEl = document.getElementById('spread-title-text');
             const descEl = document.getElementById('spread-desc-text');
-            if (val === 'linear') {
+            if (val === 'timeline') {
+                titleEl.textContent = 'Расклад «Временная шкала»';
+                descEl.textContent = 'Быстрый расклад из 2 карт для выявления причины и следствия. Идеально для простых вопросов.';
+            } else if (val === 'linear') {
                 titleEl.textContent = 'Расклад «3 Карты»';
                 descEl.textContent = 'Быстрый расклад из 3 карт: Прошлое, Настоящее и Будущее. Идеально для быстрой оценки ситуации.';
+            } else if (val === 'cross') {
+                titleEl.textContent = 'Расклад «Крест Судьбы»';
+                descEl.textContent = 'Расклад из 4 карт для анализа проблемы: Суть, Трудности, Совет и Итог.';
+            } else if (val === 'blindspot') {
+                titleEl.textContent = 'Расклад «Слепое пятно»';
+                descEl.textContent = 'Психологический расклад Окно Джохари (4 карты), показывающий скрытые аспекты личности.';
+            } else if (val === 'station') {
+                titleEl.textContent = 'Расклад «Вокзал для двоих»';
+                descEl.textContent = 'Глубокий анализ отношений между двумя людьми с помощью 7 карт.';
             } else if (val === 'holdem') {
                 titleEl.textContent = 'Расклад «На Сукне»';
                 descEl.textContent = 'Интерактивный расклад из 7 карт с раздачей из колоды, как за покерным столом.';
@@ -270,15 +282,29 @@ document.addEventListener('DOMContentLoaded', async () => {
         tg.BackButton.show(); // Show back button to allow returning
 
         const layout = document.querySelector('input[name="layout-options"]:checked').value;
+        document.querySelectorAll('.spread-section-type').forEach(s => s.classList.add('hidden'));
+
         if (layout === 'holdem') {
             document.getElementById('holdem-section').classList.remove('hidden');
             dealHoldemCards();
+        } else if (layout === 'timeline') {
+            document.getElementById('timeline-section').classList.remove('hidden');
+            dealGenericCards('.timeline-slot', 2);
         } else if (layout === 'linear') {
             document.getElementById('linear-section').classList.remove('hidden');
-            dealLinearCards();
+            dealGenericCards('.linear-slot', 3);
+        } else if (layout === 'cross') {
+            document.getElementById('cross-section').classList.remove('hidden');
+            dealGenericCards('.cross-slot', 4);
+        } else if (layout === 'blindspot') {
+            document.getElementById('blindspot-section').classList.remove('hidden');
+            dealGenericCards('.blindspot-slot', 4);
+        } else if (layout === 'station') {
+            document.getElementById('station-section').classList.remove('hidden');
+            dealGenericCards('.station-slot', 7);
         } else {
-            spreadSection.classList.remove('hidden');
-            dealCards();
+            document.getElementById('spread-section').classList.remove('hidden');
+            dealGenericCards('#spread-section .card-slot', 7);
         }
     }
 
@@ -289,8 +315,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         slots.forEach(slot => slot.innerHTML = '');
         drawnCards = [];
         resultSection.classList.add('hidden');
-        spreadSection.classList.add('hidden');
-        document.getElementById('linear-section').classList.add('hidden');
+        document.querySelectorAll('.spread-section-type').forEach(s => s.classList.add('hidden'));
         document.getElementById('holdem-section').classList.add('hidden');
         document.getElementById('holdem-container').innerHTML = '';
         document.getElementById('deck-area').innerHTML = '';
@@ -388,9 +413,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         return shuffled.slice(0, count);
     }
 
-    function dealCards() {
-        drawnCards = getRandomCards(7);
-        const slots = document.querySelectorAll('.card-slot');
+    function dealGenericCards(slotSelector, count) {
+        drawnCards = getRandomCards(count);
+        const slots = document.querySelectorAll(slotSelector);
 
         slots.forEach((slot, index) => {
             setTimeout(() => {
@@ -431,96 +456,30 @@ document.addEventListener('DOMContentLoaded', async () => {
                 cardEl.addEventListener('click', function () {
                     if (!this.classList.contains('flipped')) {
                         this.classList.add('flipped');
-                        checkAllFlipped();
+                        checkGenericFlipped(slotSelector, count);
                     } else {
                         window.openCardZoom(cardData.name, imagePath, cardData.meaning, isReversed);
                     }
                 });
 
-                // Auto flip after all cards are dealt with a very long reading pause
+                // Auto flip after all cards are dealt with reading pause based on number of cards
                 setTimeout(() => {
                     if (!cardEl.classList.contains('flipped')) {
                         cardEl.classList.add('flipped');
-                        checkAllFlipped();
+                        checkGenericFlipped(slotSelector, count);
                     }
-                }, 4000 + (index * 1500)); // 1.5s reading time per card
-
-            }, index * 800); // 800ms delay between each card dealing
-        });
-    }
-
-    function checkAllFlipped() {
-        const flippedCards = document.querySelectorAll('.tarot-card.flipped');
-        if (flippedCards.length === 7) {
-            setTimeout(() => {
-                // Automatically show interpretation instead of displaying a button
-                resultSection.classList.remove('hidden');
-                generateInterpretation();
-            }, 800);
-        }
-    }
-
-    function dealLinearCards() {
-        drawnCards = getRandomCards(3);
-        const slots = document.querySelectorAll('.linear-slot');
-
-        slots.forEach((slot, index) => {
-            setTimeout(() => {
-                const cardData = drawnCards[index];
-                const isReversed = Math.random() > 0.7;
-                drawnCards[index].isReversed = isReversed;
-
-                const cardEl = document.createElement('div');
-                cardEl.className = 'tarot-card dealt';
-
-                const cardIndex = TAROT_DECK.findIndex(c => c.name === cardData.name);
-                const imagePath = `cards/${cardIndex.toString().padStart(2, '0')}.jpg`;
-
-                // Calculate dynamic font size to prevent overflow for long strings
-                const nameLen = cardData.name.length;
-                let nameFontSize = isReversed ? 0.65 : 0.75;
-                if (nameLen > 13) nameFontSize = isReversed ? 0.48 : 0.52;
-                else if (nameLen > 9) nameFontSize = isReversed ? 0.55 : 0.62;
-
-                cardEl.innerHTML = `
-                    <div class="tarot-card-inner">
-                        <div class="tarot-card-back"></div>
-                        <div class="tarot-card-front" style="transform: rotateY(180deg)">
-                            <img src="${imagePath}" alt="${cardData.name}" class="tarot-card-image" onerror="this.onerror=null; this.src='https://placehold.co/100x150/111/d4af37?text=*'; this.style.display='block'; this.nextElementSibling.style.display='none';">
-                            <div class="tarot-img-placeholder" style="display:none; font-size:2rem; margin-bottom:5px;">${cardData.emoji}</div>
-                            <div class="tarot-name" style="font-size: ${nameFontSize}rem; line-height: 1.1;">${cardData.name}</div>
-                            ${isReversed ? '<div style="font-size: 0.50rem; color: #ff6b6b; margin-top: 2px;">(Перевернута)</div>' : ''}
-                            <div style="font-size: 0.45rem; margin-top: ${isReversed ? '2px' : '4px'}; padding: 0 4px; line-height: 1.1;">${cardData.meaning}</div>
-                        </div>
-                    </div>
-                `;
-
-                slot.appendChild(cardEl);
-
-                cardEl.addEventListener('click', function () {
-                    if (!this.classList.contains('flipped')) {
-                        this.classList.add('flipped');
-                        checkAllLinearFlipped();
-                    } else {
-                        window.openCardZoom(cardData.name, imagePath, cardData.meaning, isReversed);
-                    }
-                });
-
-                setTimeout(() => {
-                    if (!cardEl.classList.contains('flipped')) {
-                        cardEl.classList.add('flipped');
-                        checkAllLinearFlipped();
-                    }
-                }, 3000 + (index * 1500));
+                }, (count >= 7 ? 4000 : 3000) + (index * 1500));
 
             }, index * 800);
         });
     }
 
-    function checkAllLinearFlipped() {
-        const flippedCards = document.querySelectorAll('.linear-section .tarot-card.flipped');
-        if (flippedCards.length === 3) {
+    function checkGenericFlipped(slotSelector, count) {
+        // Query to match .tarot-card.flipped precisely within the dynamically provided slots
+        const flippedCards = document.querySelectorAll(`${slotSelector} > .tarot-card.flipped`);
+        if (flippedCards.length === count) {
             setTimeout(() => {
+                // Automatically show interpretation instead of displaying a button
                 resultSection.classList.remove('hidden');
                 generateInterpretation();
             }, 800);
@@ -575,9 +534,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 cardEl.innerHTML = `
                     <div class="tarot-card-inner">
-                        <!-- Back -->
+                        <!--Back -->
                         <div class="deck-card" style="box-shadow: 0 0 5px rgba(0,0,0,0.5);"></div>
-                        <!-- Front -->
+                        <!--Front -->
                         <div class="tarot-card-front" style="transform: rotateY(180deg); position: absolute; width: 100%; height: 100%; backface-visibility: hidden; background: #111; border: 1px solid var(--gold); border-radius: 5px; padding: 2px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;">
                             <img src="${imagePath}" style="width: 100%; height: 60%; object-fit: cover; border-radius: 3px;" onerror="this.onerror=null; this.src='https://placehold.co/100x150/111/d4af37?text=*';">
                             <div style="font-size: ${hNameFontSize}rem; color: var(--gold); font-family: 'Cinzel', serif; text-align: center; margin-top: 3px; font-weight: bold; line-height: 1.1;">${cardData.name}</div>
@@ -673,7 +632,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             let finalHtml = data.interpretation || "<p>Духи молчат...</p>";
 
             // Strip out random markdown HTML wrapper blocks if ChatGPT hallucinates them
-            finalHtml = finalHtml.replace(/```html\s*/i, '').replace(/```\s*$/i, '');
+            finalHtml = finalHtml.replace(/```html\s * /i, '').replace(/```\s*$/i, '');
 
             // 1. Process structured interpretation blocks
             const parser = new DOMParser();
@@ -698,7 +657,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 if (cardData) {
                     const cardIndex = TAROT_DECK.findIndex(c => c.name === cardData.name);
-                    const imagePath = `cards/${cardIndex.toString().padStart(2, '0')}.jpg`;
+                    const imagePath = `cards / ${cardIndex.toString().padStart(2, '0')}.jpg`;
 
                     // Safely pull in any orphaned paragraphs ChatGPT mistakenly placed outside the div!
                     let nextNode = block.nextSibling;
@@ -718,14 +677,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const encDesc = encodeURIComponent(cardData.meaning);
 
                     block.innerHTML = `
-                        <div style="position: relative; display: inline-block; flex-shrink: 0; width: 60px; height: 95px;">
+            < div style = "position: relative; display: inline-block; flex-shrink: 0; width: 60px; height: 95px;" >
                             <img src="${imagePath}" class="interpretation-img" style="cursor: pointer; position: absolute; top:0; left:0; width: 100%; height: 100%; transition: transform 0.2s; margin: 0;" onmouseover="this.style.transform='scale(1.05)';" onmouseout="this.style.transform='scale(1)';" onclick="window.openCardZoom(decodeURIComponent('${encName}'), '${imagePath}', decodeURIComponent('${encDesc}'), ${cardData.isReversed})" onerror="this.onerror=null; this.src='https://placehold.co/100x150/111/d4af37?text=*';">
                             <div style="position: absolute; bottom: -8px; right: -8px; font-size: 1.1rem; pointer-events: none; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">🔍</div>
                         </div>
                         <div class="interpretation-text">
                             ${innerHtml}
                         </div>
-                    `;
+        `;
                 }
             });
 
@@ -736,10 +695,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 finalHtml = finalHtml.replace(/<p>---НАПУТСТВИЕ---<\/p>/g, '---НАПУТСТВИЕ---');
                 if (finalHtml.includes('---НАПУТСТВИЕ---')) {
                     const parts = finalHtml.split('---НАПУТСТВИЕ---');
-                    finalHtml = parts[0].trim() + `\n<div class="ai-summary">
-                        <strong style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; display: block; margin-bottom: 10px; opacity: 0.8;">🔮 Главный Итог Расклада:</strong>
+                    finalHtml = parts[0].trim() + `\n < div class="ai-summary" >
+            <strong style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; display: block; margin-bottom: 10px; opacity: 0.8;">🔮 Главный Итог Расклада:</strong>
                         ${parts[1].trim()}
-                    </div>`;
+                    </div > `;
                 }
             }
 
@@ -750,7 +709,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             // Wrap in main box if it's not already
             if (!finalHtml.startsWith('<div class="ai-reading-box"')) {
-                finalHtml = `<div class="ai-reading-box">${finalHtml}</div>`;
+                finalHtml = `< div class="ai-reading-box" > ${finalHtml}</div > `;
             }
 
             // Render it

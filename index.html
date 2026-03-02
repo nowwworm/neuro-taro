@@ -85,22 +85,40 @@
                         поможет разобраться в текущей ситуации, узнать скрытые влияния и получить совет от нейросети на
                         будущее.</p>
 
-                    <div class="layout-toggle mb-4 d-flex justify-content-center flex-wrap"
-                        style="box-shadow: 0 0 10px rgba(0,0,0,0.5); border-radius: 5px; overflow: hidden;">
+                    <div class="layout-toggle mb-4 d-flex justify-content-center flex-wrap gap-1"
+                        style="box-shadow: 0 0 10px rgba(0,0,0,0.5); border-radius: 5px; padding: 5px;">
+
+                        <input type="radio" class="btn-check" name="layout-options" id="layout-timeline"
+                            value="timeline" />
+                        <label class="btn btn-outline-warning rounded-1 font-montserrat fw-bold px-2 py-1 text-nowrap"
+                            for="layout-timeline">2: Шкала</label>
+
                         <input type="radio" class="btn-check" name="layout-options" id="layout-linear" value="linear" />
-                        <label
-                            class="btn btn-outline-warning rounded-0 border-0 border-end border-warning font-montserrat fw-bold px-3 py-2"
-                            for="layout-linear">3 Карты</label>
+                        <label class="btn btn-outline-warning rounded-1 font-montserrat fw-bold px-2 py-1 text-nowrap"
+                            for="layout-linear">3: Нити</label>
+
+                        <input type="radio" class="btn-check" name="layout-options" id="layout-cross" value="cross" />
+                        <label class="btn btn-outline-warning rounded-1 font-montserrat fw-bold px-2 py-1 text-nowrap"
+                            for="layout-cross">4: Крест</label>
+
+                        <input type="radio" class="btn-check" name="layout-options" id="layout-blindspot"
+                            value="blindspot" />
+                        <label class="btn btn-outline-warning rounded-1 font-montserrat fw-bold px-2 py-1 text-nowrap"
+                            for="layout-blindspot">4: Пятно</label>
 
                         <input type="radio" class="btn-check" name="layout-options" id="layout-classic" value="classic"
                             checked />
-                        <label
-                            class="btn btn-outline-warning rounded-0 border-0 border-end border-warning font-montserrat fw-bold px-3 py-2"
-                            for="layout-classic">Подкова</label>
+                        <label class="btn btn-outline-warning rounded-1 font-montserrat fw-bold px-2 py-1 text-nowrap"
+                            for="layout-classic">7: Подкова</label>
+
+                        <input type="radio" class="btn-check" name="layout-options" id="layout-station"
+                            value="station" />
+                        <label class="btn btn-outline-warning rounded-1 font-montserrat fw-bold px-2 py-1 text-nowrap"
+                            for="layout-station">7: Вокзал</label>
 
                         <input type="radio" class="btn-check" name="layout-options" id="layout-holdem" value="holdem" />
-                        <label class="btn btn-outline-warning rounded-0 border-0 font-montserrat fw-bold px-3 py-2"
-                            for="layout-holdem">На Сукне</label>
+                        <label class="btn btn-outline-warning rounded-1 font-montserrat fw-bold px-2 py-1 text-nowrap"
+                            for="layout-holdem">Сукно</label>
                     </div>
 
                     <div class="mb-4 text-start">
@@ -118,8 +136,8 @@
             </div>
         </section>
 
-        <!-- Spread Section -->
-        <section class="spread-section hidden w-100 text-center" id="spread-section">
+        <!-- Classic/Horseshoe Spread Section -->
+        <section class="spread-section spread-section-type hidden w-100 text-center" id="spread-section">
             <h3 class="spread-title font-cinzel text-gold mb-5">Карты судьбы ложатся на стол...</h3>
 
             <div class="horseshoe-container mx-auto">
@@ -133,20 +151,74 @@
             </div>
         </section>
 
-        <!-- Linear Section -->
-        <section class="linear-section hidden w-100 text-center" id="linear-section">
-            <h3 class="spread-title font-cinzel text-gold mb-5">Нити Времени (Прошлое, Настоящее, Будущее)</h3>
+        <!-- Timeline Section (2 Cards) -->
+        <section class="timeline-section spread-section-type hidden w-100 text-center" id="timeline-section">
+            <h3 class="spread-title font-cinzel text-gold mb-5">Временная шкала (Причина - Следствие)</h3>
+            <div
+                class="linear-container mx-auto d-flex justify-content-center align-items-center gap-3 gap-md-5 flex-wrap">
+                <div class="card-slot timeline-slot" data-position="1. Первое событие"></div>
+                <div class="card-slot timeline-slot" data-position="2. Второе событие"></div>
+            </div>
+        </section>
 
+        <!-- Linear Section (3 Cards) -->
+        <section class="linear-section spread-section-type hidden w-100 text-center" id="linear-section">
+            <h3 class="spread-title font-cinzel text-gold mb-5">Нити Времени (Прошлое, Настоящее, Будущее)</h3>
             <div
                 class="linear-container mx-auto d-flex justify-content-center align-items-center gap-2 gap-md-4 flex-wrap">
-                <div class="card-slot linear-slot" id="linear-slot-1" data-position="1. Прошлое"></div>
-                <div class="card-slot linear-slot" id="linear-slot-2" data-position="2. Настоящее"></div>
-                <div class="card-slot linear-slot" id="linear-slot-3" data-position="3. Будущее"></div>
+                <div class="card-slot linear-slot" data-position="1. Прошлое"></div>
+                <div class="card-slot linear-slot" data-position="2. Настоящее"></div>
+                <div class="card-slot linear-slot" data-position="3. Будущее"></div>
+            </div>
+        </section>
+
+        <!-- Cross Section (4 Cards) -->
+        <section class="cross-section spread-section-type hidden w-100 text-center" id="cross-section">
+            <h3 class="spread-title font-cinzel text-gold mb-5">Крест Судьбы</h3>
+            <div class="cross-container mx-auto relative d-flex flex-column align-items-center gap-3">
+                <div class="card-slot cross-slot" data-position="3. Совет" style="margin-bottom: 20px;"></div>
+                <div class="d-flex justify-content-center gap-5">
+                    <div class="card-slot cross-slot" data-position="1. Суть проблемы"></div>
+                    <div class="card-slot cross-slot" data-position="2. Трудности"></div>
+                </div>
+                <div class="card-slot cross-slot" data-position="4. Итог" style="margin-top: 20px;"></div>
+            </div>
+        </section>
+
+        <!-- Blind Spot Section (4 Cards) -->
+        <section class="blindspot-section spread-section-type hidden w-100 text-center" id="blindspot-section">
+            <h3 class="spread-title font-cinzel text-gold mb-5">Слепое Пятно</h3>
+            <div class="blindspot-container mx-auto d-grid justify-content-center gap-4"
+                style="grid-template-columns: 1fr 1fr;">
+                <div class="card-slot blindspot-slot" data-position="1. Открытое Я"></div>
+                <div class="card-slot blindspot-slot" data-position="2. Слепое пятно"></div>
+                <div class="card-slot blindspot-slot" data-position="3. Тень"></div>
+                <div class="card-slot blindspot-slot" data-position="4. Неизвестное"></div>
+            </div>
+        </section>
+
+        <!-- Station for Two Section (7 Cards) -->
+        <section class="station-section spread-section-type hidden w-100 text-center" id="station-section">
+            <h3 class="spread-title font-cinzel text-gold mb-5">Вокзал для Двоих</h3>
+            <div class="station-container mx-auto d-flex justify-content-center align-items-center gap-2 flex-wrap">
+                <div class="d-flex flex-column gap-3 partner-column">
+                    <div class="card-slot station-slot" data-position="7. Мысли (Я)"></div>
+                    <div class="card-slot station-slot" data-position="6. Чувства (Я)"></div>
+                    <div class="card-slot station-slot" data-position="5. Поведение (Я)"></div>
+                </div>
+                <div class="d-flex flex-column justify-content-center mx-3 center-column">
+                    <div class="card-slot station-slot" data-position="1. Сигнификатор"></div>
+                </div>
+                <div class="d-flex flex-column gap-3 partner-column">
+                    <div class="card-slot station-slot" data-position="2. Мысли (Партнёр)"></div>
+                    <div class="card-slot station-slot" data-position="3. Чувства (Партнёр)"></div>
+                    <div class="card-slot station-slot" data-position="4. Поведение (Партнёр)"></div>
+                </div>
             </div>
         </section>
 
         <!-- Holdem Section -->
-        <section class="holdem-section hidden w-100" id="holdem-section">
+        <section class="holdem-section spread-section-type hidden w-100" id="holdem-section">
             <div class="casino-table glass-panel mb-4 text-center">
                 <h3 class="font-cinzel text-gold mt-2" style="margin-bottom: 45px;">Стол Судьбы</h3>
                 <div class="deck-area mx-auto mb-4" id="deck-area">
