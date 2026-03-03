@@ -132,10 +132,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // We will show/hide it based on screen state
     tg.MainButton.show();
 
-    // Hide HTML button if we use MainButton (optional, but cleaner for mobile)
-    if (tg.platform !== "unknown") {
-        startBtn.classList.add('d-none');
-    }
+    // Always show our HTML button too — the TG MainButton is an addition, not a replacement
+    // (They do the same thing via the two onClick listeners above)
 
     let drawnCards = [];
     let animationTimeout;
@@ -281,9 +279,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         tg.MainButton.hide(); // Hide main button during spread
         tg.BackButton.show(); // Show back button to allow returning
 
-        // Reset follow-up UI
-        document.getElementById('follow-up-section').classList.add('hidden');
-        document.getElementById('follow-up-query').value = '';
+        // Reset follow-up UI (null-safe)
+        const followUpSection = document.getElementById('follow-up-section');
+        const followUpQueryEl = document.getElementById('follow-up-query');
+        if (followUpSection) followUpSection.classList.add('hidden');
+        if (followUpQueryEl) followUpQueryEl.value = '';
 
         const layout = document.querySelector('input[name="layout-options"]:checked').value;
         document.querySelectorAll('.spread-section-type').forEach(s => s.classList.add('hidden'));
