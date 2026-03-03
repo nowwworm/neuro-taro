@@ -118,7 +118,8 @@ def create_reading(reading: schemas.ReadingRequest, request: Request, db: Sessio
     db_reading = models.Reading(
         user_id=user.telegram_id,
         cards_drawn=cards_list,
-        interpretation=interpretation
+        interpretation=interpretation,
+        query=reading.query
     )
     db.add(db_reading)
     db.commit()
@@ -127,6 +128,53 @@ def create_reading(reading: schemas.ReadingRequest, request: Request, db: Sessio
     return {
         "id": db_reading.id,
         "interpretation": db_reading.interpretation,
+        "query": db_reading.query,
+        "created_at": db_reading.created_at,
+        "energy_remaining": user.energy
+    }
+
+@app.post("/api/follow-up", response_model=schemas.ReadingResponse)
+def follow_up_reading(request_data: schemas.FollowUpRequest, request: Request, db: Session = Depends(get_db)):
+    tg_data = request.headers.get('x-telegram-init-data')
+    user_data = get_current_user_data(tg_data)
+    
+    tg_id = user_data.get("id")
+    user = db.query(models.User).filter(models.User.telegram_id == tg_id).first()
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+        
+    if user.energy <= 0:
+        raise HTTPException(status_code=400, detail="Not enough energy")
+
+    # Получаем оригинальный расклад для контекста
+    original_reading = db.query(models.Reading).filter(models.Reading.id == request_data.reading_id).first()
+    if not original_reading or original_reading.user_id != user.telegram_id:
+        raise HTTPException(status_code=404, detail="Original reading not found")
+
+    # Списываем энергию
+    user.energy -= 1
+    
+    # Генерируем ответ на уточняющий вопрос
+    interpretation = utils.generate_follow_up_reading(original_reading.cards_drawn, request_data.query)
+    
+    # Сохраняем как новый "расклад" (или можно добавить в историю уточнений)
+    # Для простоты сохраняем как новую запись в Reading
+    db_reading = models.Reading(
+        user_id=user.telegram_id,
+        cards_drawn=original_reading.cards_drawn,
+        interpretation=interpretation,
+        query=request_data.query
+    )
+    db.add(db_reading)
+    db.commit()
+    db.refresh(db_reading)
+    
+    return {
+        "id": db_reading.id,
+        "interpretation": db_reading.interpretation,
+        "query": db_reading.query,
+        "created_at": db_reading.created_at,
         "energy_remaining": user.energy
     }
 

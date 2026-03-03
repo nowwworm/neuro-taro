@@ -21,6 +21,7 @@ class Reading(Base):
     user_id = Column(Integer, ForeignKey("users.telegram_id"))
     cards_drawn = Column(JSON)
     interpretation = Column(Text)
+    query = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     user = relationship("User", back_populates="readings")

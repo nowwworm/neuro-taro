@@ -107,3 +107,19 @@ def generate_mystic_phrase():
         "Вселенная готовит для вас подарок."
     ]
     return random.choice(phrases)
+
+def generate_follow_up_reading(cards: list, query: str) -> str:
+    """
+    Генерация ответа на уточняющий вопрос.
+    """
+    intro_phrases = [
+        f"Вы спросили: «{query}». Внимательно смотрю на выпавшие ранее арканы...",
+        f"Ваш вопрос «{query}» заставляет взглянуть на карты под другим углом.",
+        "Карты раскрывают новые грани вашего вопроса..."
+    ]
+    
+    html = f"<div class='follow-up-box'><p><strong>{random.choice(intro_phrases)}</strong></p>"
+    html += f"<p>Основываясь на энергии ваших карт, могу сказать следующее: {generate_mystic_phrase()} {generate_mystic_phrase()}</p></div>"
+    
+    html += f'<p style="margin-top: 20px; font-style: italic; text-align: center; color: var(--gold-dim);">Дополнительное прозрение получено.</p>'
+    return html

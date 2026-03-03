@@ -281,6 +281,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         tg.MainButton.hide(); // Hide main button during spread
         tg.BackButton.show(); // Show back button to allow returning
 
+        // Reset follow-up UI
+        document.getElementById('follow-up-section').classList.add('hidden');
+        document.getElementById('follow-up-query').value = '';
+
         const layout = document.querySelector('input[name="layout-options"]:checked').value;
         document.querySelectorAll('.spread-section-type').forEach(s => s.classList.add('hidden'));
 
@@ -389,16 +393,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                     const cardsArray = typeof reading.cards_drawn === 'string' ? JSON.parse(reading.cards_drawn) : reading.cards_drawn;
                     const cardsList = cardsArray.map(c => `${c.name} ${c.reversed ? '(П)' : ''}`).join(', ');
+                    const questionPreview = reading.query ? ` «${reading.query.substring(0, 30)}${reading.query.length > 30 ? '...' : ''}»` : '';
 
                     accordionHtml += `
                         <div class="accordion-item bg-transparent border-0 mb-3">
                             <h2 class="accordion-header" id="heading-${idx}">
                                 <button class="accordion-button collapsed glass-panel text-gold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${idx}" aria-expanded="false" aria-controls="collapse-${idx}">
-                                    ${dateStr}
+                                    <div class="d-flex flex-column text-start">
+                                        <span style="font-size: 0.85em; opacity: 0.7;">${dateStr}</span>
+                                        <span class="text-truncate fw-bold" style="max-width: 250px;">${questionPreview || 'Расклад без вопроса'}</span>
+                                    </div>
                                 </button>
                             </h2>
                             <div id="collapse-${idx}" class="accordion-collapse collapse" aria-labelledby="heading-${idx}" data-bs-parent="#historyAccordion">
                                 <div class="accordion-body text-light-alpha">
+                                    ${reading.query ? `<p class="mb-3 text-gold italic">«${reading.query}»</p>` : ''}
                                     <p style="font-size: 0.85em; color: #aaa;"><strong>Карты:</strong> ${cardsList}</p>
                                     <hr style="border-color: rgba(255,215,0,0.3)">
                                     <div class="history-interpretation">${reading.interpretation}</div>
@@ -639,6 +648,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             loadingAi.classList.add('hidden');
             aiText.classList.remove('hidden');
 
+            // Store current reading ID for follow-up
+            window.currentReadingId = data.id;
+
             let finalHtml = data.interpretation || "<p>Духи молчат...</p>";
 
             // Strip out random markdown HTML wrapper blocks if ChatGPT hallucinates them
@@ -731,6 +743,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             // Format markdown-like output (bold text)
             aiText.innerHTML = aiText.innerHTML.replace(/\*\*(.*?)\*\*/g, '<strong class="text-gold">$1</strong>');
+
+            // Show follow-up section
+            document.getElementById('follow-up-section').classList.remove('hidden');
 
         } catch (e) {
             if (loadingInterval) clearInterval(loadingInterval);
@@ -876,5 +891,70 @@ document.addEventListener('DOMContentLoaded', async () => {
     function stopHorseAnimation() {
         // clearTimeout(animationTimeout);
         // horsesContainer.innerHTML = '';
-    }
-});
+        // Follow-up Logic
+        const followUpBtn = document.getElementById('follow-up-btn');
+        const followUpQuery = document.getElementById('follow-up-query');
+
+        if (followUpBtn) {
+            followUpBtn.addEventListener('click', async () => {
+                const query = followUpQuery.value.trim();
+                if (!query || !window.currentReadingId) return;
+
+                if (userEnergy <= 0) {
+                    if (tg.isVersionAtLeast('6.2')) tg.showAlert('Недостаточно энергии!');
+                    else alert('Недостаточно энергии!');
+                    return;
+                }
+
+                followUpBtn.disabled = true;
+                const originalIcon = followUpBtn.innerHTML;
+                followUpBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+
+                try {
+                    const res = await fetch('/api/follow-up', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-telegram-init-data': initData
+                        },
+                        body: JSON.stringify({
+                            reading_id: window.currentReadingId,
+                            query: query
+                        })
+                    });
+
+                    if (res.ok) {
+                        const data = await res.json();
+                        userEnergy = data.energy_remaining;
+                        updateEnergyUI(userEnergy);
+
+                        // Append new interpretation
+                        const hr = document.createElement('hr');
+                        hr.style.borderColor = 'var(--gold-dim)';
+                        hr.className = 'my-4';
+                        aiText.appendChild(hr);
+
+                        const newDiv = document.createElement('div');
+                        aiText.appendChild(newDiv);
+
+                        typeWriterHTML(data.interpretation, newDiv, 15, () => {
+                            followUpBtn.disabled = false;
+                            followUpBtn.innerHTML = originalIcon;
+                            followUpQuery.value = '';
+                            // Scroll to bottom
+                            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                        });
+                    } else {
+                        if (tg.isVersionAtLeast('6.2')) tg.showAlert('Ошибка при получении ответа');
+                        else alert('Ошибка при получении ответа');
+                        followUpBtn.disabled = false;
+                        followUpBtn.innerHTML = originalIcon;
+                    }
+                } catch (err) {
+                    console.error(err);
+                    followUpBtn.disabled = false;
+                    followUpBtn.innerHTML = originalIcon;
+                }
+            });
+        }
+    });

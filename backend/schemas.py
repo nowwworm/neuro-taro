@@ -23,10 +23,13 @@ class CardDraw(BaseModel):
 
 class ReadingRequest(BaseModel):
     cards: List[CardDraw]
+    query: Optional[str] = None
 
 class ReadingResponse(BaseModel):
     id: int
     interpretation: str
+    query: Optional[str] = None
+    created_at: datetime
     energy_remaining: int
 
     class Config:
@@ -35,3 +38,7 @@ class ReadingResponse(BaseModel):
 class BuyEnergyResponse(BaseModel):
     invoiceUrl: Optional[str] = None
     status: str
+
+class FollowUpRequest(BaseModel):
+    reading_id: int
+    query: str
