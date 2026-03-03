@@ -113,13 +113,13 @@ def generate_follow_up_reading(cards: list, query: str) -> str:
     Генерация ответа на уточняющий вопрос.
     """
     intro_phrases = [
-        f"Вы спросили: «{query}». Внимательно смотрю на выпавшие ранее арканы...",
-        f"Ваш вопрос «{query}» заставляет взглянуть на карты под другим углом.",
-        "Карты раскрывают новые грани вашего вопроса..."
+        f"Ваш запрос на глубокий анализ «{query}» принят. Погружаюсь в суть выпавших арканов...",
+        f"Вопрос «{query}» требует детального разбора. Карты раскрывают свои скрытые слои...",
+        "Начинаю глубокое сканирование энергетических нитей вашего расклада..."
     ]
     
     html = f"<div class='follow-up-box'><p><strong>{random.choice(intro_phrases)}</strong></p>"
-    html += f"<p>Основываясь на энергии ваших карт, могу сказать следующее: {generate_mystic_phrase()} {generate_mystic_phrase()}</p></div>"
+    html += f"<p>Глубокий анализ подтверждает: {generate_mystic_phrase()} {generate_mystic_phrase()}</p></div>"
     
-    html += f'<p style="margin-top: 20px; font-style: italic; text-align: center; color: var(--gold-dim);">Дополнительное прозрение получено.</p>'
+    html += f'<p style="margin-top: 20px; font-style: italic; text-align: center; color: var(--gold-dim);">Глубокое прозрение получено.</p>'
     return html
