@@ -224,12 +224,15 @@ textarea {
     position: relative;
     width: 100%;
     max-width: 900px;
-    height: 450px;
+    height: 700px;
+    /* Increased from 450px */
 }
 
 .card-slot {
-    width: 90px;
-    height: 145px;
+    width: 180px;
+    /* Was 90px */
+    height: 290px;
+    /* Was 145px */
     border: 1px dashed rgba(212, 175, 55, 0.3);
     border-radius: 8px;
     position: absolute;
@@ -352,8 +355,10 @@ textarea {
         top: auto !important;
         bottom: auto !important;
         margin: 0 auto !important;
-        width: 95px;
-        height: 155px;
+        width: 160px;
+        /* Increased from 95px, capped for mobile width */
+        height: 260px;
+        /* Increased from 155px */
     }
 }
 
@@ -1258,6 +1263,7 @@ input:checked+.slider:before {
         margin-right: 10px;
     }
 }
+
 /* ==========================================
    LIGHT MODE UPGRADE — Full Spec
    ========================================== */
@@ -1310,7 +1316,7 @@ input:checked+.slider:before {
     background: transparent !important;
 }
 
-[data-theme="light"] .layout-toggle .btn-check:checked + .btn {
+[data-theme="light"] .layout-toggle .btn-check:checked+.btn {
     background-color: #2563EB !important;
     border-color: #2563EB !important;
     color: #ffffff !important;
@@ -1396,4 +1402,3 @@ input:checked+.slider:before {
     border-color: #2563EB !important;
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
 }
-

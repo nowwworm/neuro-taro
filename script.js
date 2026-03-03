@@ -215,14 +215,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Make both buttons do the same thing
-    startBtn.addEventListener('click', handleStartSpread);
+    // Event Listeners
+    if (startBtn) startBtn.addEventListener('click', handleStartSpread);
     tg.MainButton.onClick(handleStartSpread);
 
     async function handleStartSpread() {
         // ENERGY CHECK LOGIC
         if (userEnergy <= 0) {
-            startBtn.innerHTML = 'Соединение...';
+            if (startBtn) startBtn.innerHTML = 'Соединение...';
             tg.MainButton.text = "Соединение...";
             tg.MainButton.disable();
 
@@ -273,6 +273,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         // DECREMENT LOCAL UI ENERGY IMMEDIATELY FOR UX
         userEnergy--;
         updateEnergyUI(userEnergy);
+
+        // Show user's question prominently during reading
+        const query = document.getElementById('user-query').value.trim();
+        const displayEls = document.querySelectorAll('.active-question-display');
+        displayEls.forEach(el => {
+            if (query) {
+                el.innerText = `«${query}»`;
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
+        });
 
         heroSection.classList.add('hidden');
         tg.MainButton.hide(); // Hide main button during spread
@@ -326,6 +338,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         heroSection.classList.remove('hidden');
         aiText.innerHTML = '';
         aiText.classList.add('hidden');
+
+        // Hide active question displays
+        document.querySelectorAll('.active-question-display').forEach(el => {
+            el.classList.add('hidden');
+            el.innerText = '';
+        });
+
         loadingAi.classList.remove('hidden');
 
         tg.BackButton.hide();
