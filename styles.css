@@ -1199,3 +1199,48 @@ input:checked+.slider:before {
     background: var(--gold-dim);
     border-radius: 10px;
 }
+
+/* Redesigned Layout Selection - Vertical List */
+.layout-toggle {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    max-width: 320px;
+    margin: 0 auto;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+    border: 1px solid var(--glass-border);
+}
+
+[data-theme="light"] .layout-toggle {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+.layout-toggle .btn {
+    text-align: center;
+    border-width: 2px;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+}
+
+.layout-toggle .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+}
+
+.layout-toggle .btn-check:checked + .btn {
+    background-color: var(--gold) !important;
+    border-color: var(--gold) !important;
+    color: var(--gold-text) !important;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+}
+
+@media (max-width: 480px) {
+    .layout-toggle {
+        max-width: 100%;
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+}
