@@ -301,6 +301,8 @@ textarea {
 .blindspot-container,
 .station-container {
     padding-bottom: 50px;
+    row-gap: 60px;
+    /* Added to prevent overlap when cards wrap */
 }
 
 .linear-slot,
@@ -311,7 +313,8 @@ textarea {
     position: relative !important;
     transform: none !important;
     flex-shrink: 0;
-    margin-bottom: 30px;
+    margin-bottom: 60px;
+    /* Increased from 30px */
 }
 
 .blindspot-container {
