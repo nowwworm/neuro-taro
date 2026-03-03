@@ -78,20 +78,26 @@ test.describe('Neuro-Tarot E2E Scenarios', () => {
         });
 
         await test.step('Start reading', async () => {
-            // It should display 'Сделать расклад' since we give 9999 mock energy
+            // Updated to the new renamed button text
             const startBtn = page.locator('#start-btn');
             await expect(startBtn).toBeVisible({ timeout: 10000 });
-            await expect(startBtn).toHaveText(/Сделать расклад/i, { timeout: 10000 });
+            await expect(startBtn).toHaveText(/УЗНАТЬ СВОЮ СУДЬБУ/i, { timeout: 10000 });
 
             // Force click since the button visually hides itself after setup but still triggers
             await startBtn.click({ force: true });
         });
 
-        await test.step('Cards are dealt and flipped', async () => {
-            // At least 7 cards should be generated (accounting for duplicated event fires handling)
+        await test.step('Cards are dealt and flipped with correct dimensions', async () => {
+            // At least 7 cards should be generated
             await expect(async () => {
                 expect(await page.locator('.tarot-card').count()).toBeGreaterThanOrEqual(7);
             }).toPass({ timeout: 15000 });
+
+            // Verify doubled card sizes (160x260px on mobile)
+            const cardSlot = page.locator('.card-slot').first();
+            const box = await cardSlot.boundingBox();
+            expect(box.width).toBeCloseTo(160, 0);
+            expect(box.height).toBeCloseTo(260, 0);
 
             // After a sequence of delays, they get the 'flipped' class 
             await expect(async () => {
@@ -99,13 +105,18 @@ test.describe('Neuro-Tarot E2E Scenarios', () => {
             }).toPass({ timeout: 20000 });
         });
 
-        await test.step('Interpretation is generated', async () => {
+        await test.step('Interpretation and Deep Analysis', async () => {
             const resultSection = page.locator('#result-section');
             await expect(resultSection).not.toHaveClass(/hidden/, { timeout: 10000 });
 
             const aiText = page.locator('#ai-text');
             await expect(aiText).toBeVisible({ timeout: 10000 });
             await expect(aiText).toContainText('Приветствую', { timeout: 10000 });
+
+            // Verify Deep Analysis section
+            const followUpSection = page.locator('#follow-up-section');
+            await expect(followUpSection).toBeVisible();
+            await expect(followUpSection).toContainText(/Глубокий анализ/i);
         });
     });
 

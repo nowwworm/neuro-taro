@@ -201,10 +201,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         tgEnergy.textContent = `⚡️ ${energy}`;
         // Update both HTML button and TG MainButton
         if (energy > 0) {
-            startBtn.innerHTML = 'Сделать расклад';
+            startBtn.innerHTML = 'УЗНАТЬ СВОЮ СУДЬБУ';
             startBtn.classList.remove('outline');
 
-            tg.MainButton.text = "Сделать расклад";
+            tg.MainButton.text = "УЗНАТЬ СВОЮ СУДЬБУ";
             tg.MainButton.enable();
         } else {
             startBtn.innerHTML = 'Купить заряд (50 ⭐️)';
