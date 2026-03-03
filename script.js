@@ -125,11 +125,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 
-    // Setup MainButton for "Сделать расклад"
+    // Setup Telegram MainButton
     tg.MainButton.text = "Сделать расклад";
-    tg.MainButton.color = tg.themeParams.button_color || "#d4af37";
-    tg.MainButton.textColor = tg.themeParams.button_text_color || "#1a0f24";
-    // We will show/hide it based on screen state
+    tg.MainButton.color = tg.themeParams.button_color || "#2563EB";
+    tg.MainButton.textColor = tg.themeParams.button_text_color || "#ffffff";
     tg.MainButton.show();
 
     // Always show our HTML button too — the TG MainButton is an addition, not a replacement
@@ -891,70 +890,71 @@ document.addEventListener('DOMContentLoaded', async () => {
     function stopHorseAnimation() {
         // clearTimeout(animationTimeout);
         // horsesContainer.innerHTML = '';
-        // Follow-up Logic
-        const followUpBtn = document.getElementById('follow-up-btn');
-        const followUpQuery = document.getElementById('follow-up-query');
+    }
 
-        if (followUpBtn) {
-            followUpBtn.addEventListener('click', async () => {
-                const query = followUpQuery.value.trim();
-                if (!query || !window.currentReadingId) return;
+    // Follow-up Logic
+    const followUpBtn = document.getElementById('follow-up-btn');
+    const followUpQuery = document.getElementById('follow-up-query');
 
-                if (userEnergy <= 0) {
-                    if (tg.isVersionAtLeast('6.2')) tg.showAlert('Недостаточно энергии!');
-                    else alert('Недостаточно энергии!');
-                    return;
-                }
+    if (followUpBtn) {
+        followUpBtn.addEventListener('click', async () => {
+            const query = followUpQuery.value.trim();
+            if (!query || !window.currentReadingId) return;
 
-                followUpBtn.disabled = true;
-                const originalIcon = followUpBtn.innerHTML;
-                followUpBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            if (userEnergy <= 0) {
+                if (tg.isVersionAtLeast('6.2')) tg.showAlert('Недостаточно энергии!');
+                else alert('Недостаточно энергии!');
+                return;
+            }
 
-                try {
-                    const res = await fetch('/api/follow-up', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'x-telegram-init-data': initData
-                        },
-                        body: JSON.stringify({
-                            reading_id: window.currentReadingId,
-                            query: query
-                        })
-                    });
+            followUpBtn.disabled = true;
+            const originalIcon = followUpBtn.innerHTML;
+            followUpBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
 
-                    if (res.ok) {
-                        const data = await res.json();
-                        userEnergy = data.energy_remaining;
-                        updateEnergyUI(userEnergy);
+            try {
+                const res = await fetch('/api/follow-up', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-telegram-init-data': initData
+                    },
+                    body: JSON.stringify({
+                        reading_id: window.currentReadingId,
+                        query: query
+                    })
+                });
 
-                        // Append new interpretation
-                        const hr = document.createElement('hr');
-                        hr.style.borderColor = 'var(--gold-dim)';
-                        hr.className = 'my-4';
-                        aiText.appendChild(hr);
+                if (res.ok) {
+                    const data = await res.json();
+                    userEnergy = data.energy_remaining;
+                    updateEnergyUI(userEnergy);
 
-                        const newDiv = document.createElement('div');
-                        aiText.appendChild(newDiv);
+                    const hr = document.createElement('hr');
+                    hr.style.borderColor = 'var(--gold-dim)';
+                    hr.className = 'my-4';
+                    aiText.appendChild(hr);
 
-                        typeWriterHTML(data.interpretation, newDiv, 15, () => {
-                            followUpBtn.disabled = false;
-                            followUpBtn.innerHTML = originalIcon;
-                            followUpQuery.value = '';
-                            // Scroll to bottom
-                            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-                        });
-                    } else {
-                        if (tg.isVersionAtLeast('6.2')) tg.showAlert('Ошибка при получении ответа');
-                        else alert('Ошибка при получении ответа');
+                    const newDiv = document.createElement('div');
+                    aiText.appendChild(newDiv);
+
+                    typeWriterHTML(data.interpretation, newDiv, 15, () => {
                         followUpBtn.disabled = false;
                         followUpBtn.innerHTML = originalIcon;
-                    }
-                } catch (err) {
-                    console.error(err);
+                        followUpQuery.value = '';
+                        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                    });
+                } else {
+                    if (tg.isVersionAtLeast('6.2')) tg.showAlert('Ошибка при получении ответа');
+                    else alert('Ошибка при получении ответа');
                     followUpBtn.disabled = false;
                     followUpBtn.innerHTML = originalIcon;
                 }
-            });
-        }
-    });
+            } catch (err) {
+                console.error(err);
+                followUpBtn.disabled = false;
+                followUpBtn.innerHTML = originalIcon;
+            }
+        });
+    }
+
+});
