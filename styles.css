@@ -14,10 +14,17 @@
 }
 
 [data-theme="light"] {
-    --theme-bg-override: #fdfaf6;
-    --text-light: #2d1a3f;
-    --card-bg: rgba(255, 255, 255, 0.9);
-    --glass-border: rgba(212, 175, 55, 0.6);
+    /* Light Mode Upgrade - Graphite + Blue */
+    --theme-bg-override: #F8FAFC;
+    --text-light: #1E293B;
+    --text-secondary: #64748B;
+    --card-bg: rgba(255, 255, 255, 0.95);
+    --glass-border: rgba(37, 99, 235, 0.2);
+    --accent-primary: #2563EB;
+    --accent-secondary: #64748B;
+    --error-color: #E11D48;
+    --gold-dim: rgba(37, 99, 235, 0.25);
+    --gold-glow: rgba(37, 99, 235, 0.6);
 }
 
 * {
@@ -29,7 +36,7 @@
 body {
     background-color: var(--theme-bg-override);
     color: var(--text-light);
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Inter', 'Roboto', 'Montserrat', sans-serif;
     min-height: 100vh;
     overflow-x: hidden;
     position: relative;
@@ -79,11 +86,14 @@ textarea {
 }
 
 [data-theme="light"] .text-light-alpha {
-    color: rgba(45, 26, 63, 0.8);
+    color: var(--text-light);
+    opacity: 0.85;
 }
 
 [data-theme="light"] .glass-panel {
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1), inset 0 0 20px rgba(212, 175, 55, 0.2);
+    background: var(--card-bg) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(37, 99, 235, 0.1);
+    border: 1px solid rgba(37, 99, 235, 0.15);
 }
 
 @keyframes move-twink-back {
@@ -1076,6 +1086,7 @@ input:checked+.slider:before {
 [data-theme="light"] .navbar-toggler-icon {
     filter: invert(0.8);
 }
+
 /* Holdem Card Front Classes */
 .holdem-front {
     transform: rotateY(180deg);
@@ -1092,12 +1103,14 @@ input:checked+.slider:before {
     align-items: center;
     justify-content: flex-start;
 }
+
 .holdem-img {
     width: 100%;
     height: 60%;
     object-fit: cover;
     border-radius: 3px;
 }
+
 .holdem-name {
     color: var(--gold);
     font-family: 'Cinzel', serif;
@@ -1106,6 +1119,7 @@ input:checked+.slider:before {
     font-weight: bold;
     line-height: 1.1;
 }
+
 .holdem-reversed {
     font-size: 0.38rem;
     color: #ff6b6b;
@@ -1179,7 +1193,7 @@ input:checked+.slider:before {
         min-width: auto;
         flex-wrap: wrap;
     }
-    
+
     .layout-toggle-container {
         overflow-x: visible;
     }
@@ -1230,7 +1244,7 @@ input:checked+.slider:before {
     box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
 }
 
-.layout-toggle .btn-check:checked + .btn {
+.layout-toggle .btn-check:checked+.btn {
     background-color: var(--gold) !important;
     border-color: var(--gold) !important;
     color: var(--gold-text) !important;
@@ -1244,3 +1258,142 @@ input:checked+.slider:before {
         margin-right: 10px;
     }
 }
+/* ==========================================
+   LIGHT MODE UPGRADE — Full Spec
+   ========================================== */
+
+/* Typography overrides */
+[data-theme="light"] body {
+    font-family: 'Inter', 'Roboto', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    background-color: #F8FAFC;
+}
+
+/* Heading sizes */
+[data-theme="light"] h1,
+[data-theme="light"] h2 {
+    font-size: clamp(18px, 4vw, 22px);
+    font-weight: 700;
+    color: #1E293B;
+}
+
+/* Meta / secondary text */
+[data-theme="light"] .text-muted,
+[data-theme="light"] small,
+[data-theme="light"] .accordion-button span:first-child {
+    font-size: 13px;
+    color: #64748B !important;
+    font-style: italic;
+}
+
+/* ------ Layout container fixes ------ */
+[data-theme="light"] .container,
+[data-theme="light"] .container-fluid {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+/* Main panel padding on mobile */
+@media (max-width: 576px) {
+    [data-theme="light"] .glass-panel {
+        padding: 16px !important;
+    }
+}
+
+/* ------ Accent buttons (blue in light mode) ------ */
+[data-theme="light"] .layout-toggle .btn-outline-warning {
+    color: #2563EB !important;
+    border-color: #2563EB !important;
+    background: transparent !important;
+}
+
+[data-theme="light"] .layout-toggle .btn-check:checked + .btn {
+    background-color: #2563EB !important;
+    border-color: #2563EB !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 12px rgba(37, 99, 235, 0.4) !important;
+}
+
+[data-theme="light"] .layout-toggle .btn:hover {
+    background: rgba(37, 99, 235, 0.08) !important;
+    border-color: #2563EB !important;
+    color: #2563EB !important;
+}
+
+/* ------ Card / Spread cards in light mode ------ */
+[data-theme="light"] .tarot-card {
+    border: 2px solid rgba(37, 99, 235, 0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+/* ------ Primary action button ------ */
+[data-theme="light"] .mystic-btn {
+    background: #2563EB;
+    border-color: #2563EB;
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+}
+
+[data-theme="light"] .mystic-btn:hover {
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+    background: #1d4ed8;
+    border-color: #1d4ed8;
+}
+
+[data-theme="light"] .mystic-btn.outline {
+    background: transparent;
+    color: #2563EB;
+    border-color: #2563EB;
+}
+
+/* ------ History accordion in light mode ------ */
+[data-theme="light"] .accordion-button {
+    color: #1E293B !important;
+    background: white !important;
+}
+
+[data-theme="light"] .accordion-button:not(.collapsed) {
+    background: #EFF6FF !important;
+    color: #2563EB !important;
+}
+
+[data-theme="light"] .accordion-item {
+    border: 1px solid rgba(37, 99, 235, 0.12) !important;
+    border-radius: 10px !important;
+    overflow: hidden;
+}
+
+/* ------ Navbar / header ------ */
+[data-theme="light"] .navbar {
+    background: rgba(248, 250, 252, 0.95) !important;
+    border-bottom: 1px solid rgba(37, 99, 235, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+[data-theme="light"] .nav-link {
+    color: #1E293B !important;
+}
+
+[data-theme="light"] .nav-link:hover,
+[data-theme="light"] .nav-link.active {
+    color: #2563EB !important;
+}
+
+/* ------ Input styling ------ */
+[data-theme="light"] .tarot-input,
+[data-theme="light"] .form-control {
+    background: white !important;
+    border: 1.5px solid rgba(37, 99, 235, 0.2) !important;
+    color: #1E293B !important;
+}
+
+[data-theme="light"] .tarot-input:focus,
+[data-theme="light"] .form-control:focus {
+    border-color: #2563EB !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+}
+
