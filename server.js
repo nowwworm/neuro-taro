@@ -125,10 +125,12 @@ app.post('/api/me', telegramAuth, async (req, res) => {
 });
 
 // OpenAI prompt generator
-const generateAIFortune = async (cards, firstName, query) => {
+const generateAIFortune = async (cards, firstName, query, spreadType, city, date) => {
     const cardList = cards.map((c, i) => `${i + 1}. ${c.name} ${c.reversed ? "(Перевернутая)" : "(Прямая)"}`).join(', ');
 
-    const queryContext = query ? `Пользователь задал явный вопрос картам: "${query}". Проанализируй эти карты именно в контексте его вопроса, дай мистическое, но конкретное напутствие.` : `Проанализируй эти конкретные карты, дай мистическое, но конкретное напутствие.`;
+    const queryContext = spreadType === 'power-outage'
+        ? `Это специальный расклад о вероятности отключения электричества в городе ${city} на дату ${date}. Позиции карт: текущая ситуация, факторы влияния, вероятный итог. Дай итоговую оценку строго одной из формулировок: «скорее да», «скорее нет» или «неопределённо». Напомни в финальном напутствии, что это эзотерическая интерпретация, а не официальный прогноз энергосетей.`
+        : query ? `Пользователь задал явный вопрос картам: "${query}". Проанализируй эти карты именно в контексте его вопроса, дай мистическое, но конкретное напутствие.` : `Проанализируй эти конкретные карты, дай мистическое, но конкретное напутствие.`;
 
     try {
         const completion = await openai.chat.completions.create({
@@ -171,28 +173,44 @@ app.post('/api/readings', telegramAuth, async (req, res) => {
         const tgId = req.tgUser.id.toString();
         const firstName = req.tgUser.first_name || 'Путешественник';
 
-        // 1. Check Energy
+        const { cards, query, spreadType = 'classic', city = null, date = null } = req.body;
+        const isFreeSpread = spreadType === 'power-outage';
+
+        // 1. Check Energy (the power-outage spread is free)
         const userRes = await db.query('SELECT energy FROM users WHERE telegram_id = $1', [tgId]);
-        if (userRes.rows.length === 0 || userRes.rows[0].energy < 1) {
+        if (userRes.rows.length === 0 || (!isFreeSpread && userRes.rows[0].energy < 1)) {
             return res.status(403).json({ error: "Not enough energy. Please refill." });
         }
 
-        const { cards, query } = req.body;
         if (!cards || !Array.isArray(cards) || cards.length === 0 || cards.length > 10) {
             return res.status(400).json({ error: "Invalid cards array. Require 1-10 cards." });
         }
 
-        // 2. Generate Real AI Text
-        const generatedText = await generateAIFortune(cards, firstName, query);
+        if (spreadType === 'power-outage') {
+            if (!city || typeof city !== 'string' || city.trim().length < 2 || !/^\d{4}-\d{2}-\d{2}$/.test(date || '')) {
+                return res.status(400).json({ error: "City and a valid date are required for this spread." });
+            }
+            const requestedDate = new Date(`${date}T00:00:00Z`);
+            const today = new Date();
+            today.setUTCHours(0, 0, 0, 0);
+            if (Number.isNaN(requestedDate.getTime()) || requestedDate < today) {
+                return res.status(400).json({ error: "Reading date cannot be in the past." });
+            }
+        }
 
-        // 3. Decrement Energy
-        await db.query('UPDATE users SET energy = energy - 1 WHERE telegram_id = $1', [tgId]);
+        // 2. Generate Real AI Text
+        const generatedText = await generateAIFortune(cards, firstName, query, spreadType, city?.trim(), date);
+
+        // 3. Decrement Energy for paid spreads only
+        if (!isFreeSpread) {
+            await db.query('UPDATE users SET energy = energy - 1 WHERE telegram_id = $1', [tgId]);
+        }
 
         // 4. Save Reading
-        const sqlQuery = `INSERT INTO readings (telegram_id, cards_drawn, interpretation) VALUES ($1, $2, $3) RETURNING id`;
-        const result = await db.query(sqlQuery, [tgId, JSON.stringify(cards), generatedText]);
+        const sqlQuery = `INSERT INTO readings (telegram_id, cards_drawn, interpretation, query, spread_type, city, reading_date) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`;
+        const result = await db.query(sqlQuery, [tgId, JSON.stringify(cards), generatedText, query || null, spreadType, city?.trim() || null, date || null]);
 
-        res.status(201).json({ success: true, id: result.rows[0].id, energy_remaining: userRes.rows[0].energy - 1, interpretation: generatedText });
+        res.status(201).json({ success: true, id: result.rows[0].id, energy_remaining: isFreeSpread ? userRes.rows[0].energy : userRes.rows[0].energy - 1, interpretation: generatedText });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Internal server error" });
@@ -253,7 +271,7 @@ app.get('/api/history', telegramAuth, async (req, res) => {
 
         // Fetch up to 20 last readings for this user
         const result = await db.query(
-            'SELECT id, cards_drawn, interpretation, created_at FROM readings WHERE telegram_id = $1 ORDER BY created_at DESC LIMIT 20',
+            'SELECT id, cards_drawn, interpretation, query, spread_type, city, reading_date, created_at FROM readings WHERE telegram_id = $1 ORDER BY created_at DESC LIMIT 20',
             [tgId]
         );
 

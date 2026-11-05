@@ -38,9 +38,17 @@ async function testConnection() {
                 telegram_id VARCHAR(255),
                 cards_drawn JSONB NOT NULL,
                 interpretation TEXT NOT NULL,
+                query TEXT,
+                spread_type VARCHAR(64),
+                city VARCHAR(255),
+                reading_date DATE,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         `);
+        await client.query(`ALTER TABLE readings ADD COLUMN IF NOT EXISTS query TEXT`);
+        await client.query(`ALTER TABLE readings ADD COLUMN IF NOT EXISTS spread_type VARCHAR(64)`);
+        await client.query(`ALTER TABLE readings ADD COLUMN IF NOT EXISTS city VARCHAR(255)`);
+        await client.query(`ALTER TABLE readings ADD COLUMN IF NOT EXISTS reading_date DATE`);
         console.log("Readings table initialized.");
         client.release();
     } catch (err) {

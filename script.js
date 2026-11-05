@@ -106,6 +106,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             } else if (val === 'linear') {
                 titleEl.textContent = 'Расклад «3 Карты»';
                 descEl.textContent = 'Быстрый расклад из 3 карт: Прошлое, Настоящее и Будущее. Идеально для быстрой оценки ситуации.';
+            } else if (val === 'power-outage') {
+                titleEl.textContent = 'Расклад «Отключение света»';
+                descEl.textContent = 'Три карты для вероятностной оценки ситуации с электричеством в выбранном городе и на выбранную дату.';
             } else if (val === 'cross') {
                 titleEl.textContent = 'Расклад «Крест Судьбы»';
                 descEl.textContent = 'Расклад из 4 карт для анализа проблемы: Суть, Трудности, Совет и Итог.';
@@ -122,8 +125,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                 titleEl.textContent = 'Расклад «Подкова (Классика)»';
                 descEl.textContent = 'Классический расклад из 7 карт, который поможет разобраться в текущей ситуации, узнать скрытые влияния и получить совет от нейросети на будущее.';
             }
+            document.getElementById('power-outage-form')?.classList.toggle('d-none', val !== 'power-outage');
+            updateEnergyUI(userEnergy);
         });
     });
+
+    const outageDate = document.getElementById('outage-date');
+    if (outageDate) {
+        const today = new Date().toISOString().slice(0, 10);
+        outageDate.min = today;
+        outageDate.value = today;
+    }
 
     // Setup Telegram MainButton
     tg.MainButton.text = "Сделать расклад";
@@ -199,6 +211,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function updateEnergyUI(energy) {
         tgEnergy.textContent = `⚡️ ${energy}`;
+        const isFreeOutage = document.querySelector('input[name="layout-options"]:checked')?.value === 'power-outage';
+        if (isFreeOutage) {
+            startBtn.innerHTML = 'БЕСПЛАТНЫЙ РАСКЛАД';
+            startBtn.classList.remove('outline');
+            tg.MainButton.text = "БЕСПЛАТНЫЙ РАСКЛАД";
+            tg.MainButton.enable();
+            return;
+        }
         // Update both HTML button and TG MainButton
         if (energy > 0) {
             startBtn.innerHTML = 'УЗНАТЬ СВОЮ СУДЬБУ';
@@ -221,7 +241,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function handleStartSpread() {
         // ENERGY CHECK LOGIC
-        if (userEnergy <= 0) {
+        const isFreeOutage = document.querySelector('input[name="layout-options"]:checked')?.value === 'power-outage';
+        if (!isFreeOutage && userEnergy <= 0) {
             if (startBtn) startBtn.innerHTML = 'Соединение...';
             tg.MainButton.text = "Соединение...";
             tg.MainButton.disable();
@@ -271,8 +292,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // DECREMENT LOCAL UI ENERGY IMMEDIATELY FOR UX
-        userEnergy--;
-        updateEnergyUI(userEnergy);
+        if (!isFreeOutage) {
+            userEnergy--;
+            updateEnergyUI(userEnergy);
+        }
 
         // Show user's question prominently during reading
         const query = document.getElementById('user-query').value.trim();
@@ -308,6 +331,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else if (layout === 'linear') {
             document.getElementById('linear-section').classList.remove('hidden');
             dealGenericCards('.linear-slot', 3);
+        } else if (layout === 'power-outage') {
+            const city = document.getElementById('outage-city')?.value.trim();
+            const date = document.getElementById('outage-date')?.value;
+            const today = new Date().toISOString().slice(0, 10);
+            if (!city || !date || date < today) {
+                alert('Укажите город и сегодняшнюю или будущую дату.');
+                resetApp();
+                return;
+            }
+            const question = `Выключат ли свет в городе ${city} ${new Date(`${date}T00:00:00`).toLocaleDateString('ru-RU')}?`;
+            document.querySelectorAll('#power-outage-section .active-question-display').forEach(el => {
+                el.textContent = question;
+                el.classList.remove('hidden');
+            });
+            document.getElementById('power-outage-section').classList.remove('hidden');
+            dealGenericCards('.outage-slot', 3);
         } else if (layout === 'cross') {
             document.getElementById('cross-section').classList.remove('hidden');
             dealGenericCards('.cross-slot', 4);
@@ -412,6 +451,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const cardsArray = typeof reading.cards_drawn === 'string' ? JSON.parse(reading.cards_drawn) : reading.cards_drawn;
                     const cardsList = cardsArray.map(c => `${c.name} ${c.reversed ? '(П)' : ''}`).join(', ');
                     const questionPreview = reading.query ? ` «${reading.query.substring(0, 30)}${reading.query.length > 30 ? '...' : ''}»` : '';
+                    const outageMeta = reading.spread_type === 'power-outage'
+                        ? `<p class="mb-2 text-gold"><strong>Отключение света:</strong> ${reading.city || '—'}${reading.reading_date ? `, ${new Date(`${reading.reading_date}T00:00:00`).toLocaleDateString('ru-RU')}` : ''}</p>`
+                        : '';
 
                     accordionHtml += `
                         <div class="accordion-item bg-transparent border-0 mb-3">
@@ -425,6 +467,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             </h2>
                             <div id="collapse-${idx}" class="accordion-collapse collapse" aria-labelledby="heading-${idx}" data-bs-parent="#historyAccordion">
                                 <div class="accordion-body text-light-alpha">
+                                    ${outageMeta}
                                     ${reading.query ? `<p class="mb-3 text-gold italic">«${reading.query}»</p>` : ''}
                                     <p style="font-size: 0.85em; color: #aaa;"><strong>Карты:</strong> ${cardsList}</p>
                                     <hr style="border-color: rgba(255,215,0,0.3)">
@@ -646,6 +689,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             const userQuery = document.getElementById('user-query')?.value?.trim() || '';
+            const layout = document.querySelector('input[name="layout-options"]:checked')?.value;
+            const isOutage = layout === 'power-outage';
+            const outageCity = document.getElementById('outage-city')?.value.trim() || null;
+            const outageDateValue = document.getElementById('outage-date')?.value || null;
+            const outageQuestion = isOutage && outageCity && outageDateValue
+                ? `Выключат ли свет в городе ${outageCity} ${new Date(`${outageDateValue}T00:00:00`).toLocaleDateString('ru-RU')}?`
+                : userQuery;
             // Fetch real AI response from backend
             const res = await fetch('/api/readings', {
                 method: 'POST',
@@ -654,7 +704,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     'x-telegram-init-data': initData
                 },
                 body: JSON.stringify({
-                    query: userQuery,
+                    query: outageQuestion,
+                    spreadType: isOutage ? 'power-outage' : layout,
+                    city: isOutage ? outageCity : null,
+                    date: isOutage ? outageDateValue : null,
                     cards: drawnCards.map(c => ({ name: c.name, reversed: c.isReversed }))
                 })
             });
